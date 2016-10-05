@@ -1,0 +1,84 @@
+<html>
+<head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <title></title>
+</head>
+<body>
+  <div class="container"></div>
+  <div>
+    <h1>Music Maker</h1>
+    <input id="note" placeholder="note">
+    <input id="duration" placeholder="duration">
+    <input id="octave" type="number" placeholder="octave">
+    <button onclick="Play()">Push Play</button>
+  </div>
+</body>
+<script>
+
+    var ctx = new window.webkitAudioContext || new window.AudioContext;
+            
+            
+    function noteDuration() {
+      var duration = document.getElementById("duration").value.toLowerCase();
+      
+       if (duration === "w")
+      sustain = 4
+      
+      if (duration === "h")
+      sustain = 2
+      
+      if (duration === "q")
+      sustain = 1
+    
+      if (duration === "e")
+      sustain = .5
+      
+      if (duration === "s")
+      sustain = .25
+      
+      return sustain;
+    }
+    
+    
+    function noteHz(){
+      var note = document.getElementById("note").value.toString().toLowerCase();
+      var frequencies = {
+       	'c': 130.81,
+       	'c#': 139.00,
+       	'd': 146.83,
+       	'd#': 156.00,
+       	'e': 164.81,
+       	'f': 174.61,
+       	'f#': 185.00,
+       	'g': 196.00,
+       	'g#': 208.00,
+       	'a': 220.00,
+       	'a#': 233.00,
+       	'b': 246.94,
+       	};
+       	
+       	var hertz = frequencies[note];
+       	return hertz;
+    }
+    
+    
+    function Play(sustain, hertz) {
+     
+      var octave = document.getElementById("octave").value;
+      var sustain = noteDuration();
+      var hertz = noteHz();  
+      var osc = ctx.createOscillator();
+      var gainNode = ctx.createGain();
+      
+      osc.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      gainNode.gain.value = 0.0;
+      gainNode.gain.setTargetAtTime(.75, ctx.currentTime, 0.1);
+      gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustain, 0.01)
+      osc.frequency.value = hertz * octave;
+      osc.start();
+      osc.stop(ctx.currentTime + sustain + .01);
+    }
+    
+</script>
+</html>
