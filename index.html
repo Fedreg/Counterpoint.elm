@@ -7,14 +7,8 @@
   <div class="container"></div>
   <div>
     <h1>Music Maker</h1>
-    <input id="note" placeholder="note">
-    <input id="duration" placeholder="duration">
-    <input id="octave" type="number" placeholder="octave">
-    <button onclick="Play()">Push Play</button>
     <input id="note-string">
-    <button onclick="stringParser()">Push Play</button>
-
-    
+    <button onclick="sendNotesToPlay(0)">Push Play</button>
   </div>
 </body>
 <script>
@@ -31,12 +25,13 @@
     
     function sendNotesToPlay(index, arr) {   
       var arr = stringParser();
-      //TODO: convert arr[index] into its own array of [note, duration, octave] (currently "notedurationoctave")
+      //TODO: convert arr[index] into its own array of ["note", "duration", "octave"] (currently "notedurationoctave")
       
       if (arr.length > index) {
         setTimeout(function() {
-          play(arr[index]);
-        }, 500)
+          play(arr);//arr[index]);
+          sendNotesToPlay(++index);
+        }, 1000)
       }
     }
     
@@ -83,7 +78,7 @@
     }
     
     
-    function Play(arr) {
+    function play(arr) {
      
       var octave = arr[2];
       var sustain = noteDuration(arr[1]);
