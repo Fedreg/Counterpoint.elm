@@ -11,16 +11,37 @@
     <input id="duration" placeholder="duration">
     <input id="octave" type="number" placeholder="octave">
     <button onclick="Play()">Push Play</button>
+    <input id="note-string">
+    <button onclick="stringParser()">Push Play</button>
+
+    
   </div>
 </body>
 <script>
 
     var ctx = new window.webkitAudioContext || new window.AudioContext;
-            
-            
-    function noteDuration() {
-      var duration = document.getElementById("duration").value.toLowerCase();
       
+    function stringParser() {
+      var noteString = document.getElementById("note-string").value.toLowerCase();  
+      var noteArr =  noteString.match(/([a-g]+#|[a-g])([whqes])(\d)/g); 
+      return noteArr;
+      // expected input ex: 'co1d#s4fw2', etc
+      // expected output ['co1' 'd#s4' 'fw2'], etc
+    }
+    
+    function sendNotesToPlay(index, arr) {   
+      var arr = stringParser();
+      //TODO: convert arr[index] into its own array of [note, duration, octave] (currently "notedurationoctave")
+      
+      if (arr.length > index) {
+        setTimeout(function() {
+          play(arr[index]);
+        }, 500)
+      }
+    }
+    
+    function noteDuration(char) {
+      var duration = char;      
        if (duration === "w")
       sustain = 4
       
@@ -30,7 +51,7 @@
       if (duration === "q")
       sustain = 1
     
-      if (duration === "e")
+      if (duration === "o")
       sustain = .5
       
       if (duration === "s")
@@ -40,8 +61,8 @@
     }
     
     
-    function noteHz(){
-      var note = document.getElementById("note").value.toString().toLowerCase();
+    function noteHz(note){
+      var note = note;
       var frequencies = {
        	'c': 130.81,
        	'c#': 139.00,
@@ -62,11 +83,11 @@
     }
     
     
-    function Play(sustain, hertz) {
+    function Play(arr) {
      
-      var octave = document.getElementById("octave").value;
-      var sustain = noteDuration();
-      var hertz = noteHz();  
+      var octave = arr[2];
+      var sustain = noteDuration(arr[1]);
+      var hertz = noteHz(arr[0]);  
       var osc = ctx.createOscillator();
       var gainNode = ctx.createGain();
       
