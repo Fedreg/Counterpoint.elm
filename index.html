@@ -7,51 +7,60 @@
   <div class="container"></div>
   <div>
     <h1>Music Maker</h1>
-    <input id="note-string">
-    <button onclick="sendNotesToPlay(0)">Push Play</button>
+    <input id="ns1">
+    <input id="ns2">
+    <input id="ns3">
+    <input id="ns4">
+    <button onclick="sendNotesToPlay(0, 'ns1'), sendNotesToPlay(0, 'ns2'), sendNotesToPlay(0, 'ns3'), sendNotesToPlay(0, 'ns4')">Push Play</button>
   </div>
+  <ul>
+    <li>Enter notes as "cw4"</li>
+    <li>where "c" equals the note from a-g; #s work but no bs (that's flats, not BS)</li>
+    <li>"w" equals rythmic note type; w for whole, h for half, q for quarter, o for eigth(it's complicated) s for sixteenth</li>
+    <li>"4" equals the octave multiplier.  Any positive number works</li>
+   </ul>
 </body>
 <script>
 
     var ctx = new window.webkitAudioContext || new window.AudioContext;
-    var finalArr = [];
-
-    function stringParser() {
-      var noteString = document.getElementById("note-string").value.toLowerCase();  
+   
+    function stringParser(id) {
+      var noteString = document.getElementById(id).value.toLowerCase();  
       var noteArr =  noteString.match(/([a-g]+#|[a-g])([whqes])(\d)/g); 
-      return noteArr;
+      var finalArr = noteArr.map(makeArrInArr);
+
+      function makeArrInArr(item) {
+        if (item.length === 4) {
+          var arr = [];
+          arr.push(item.slice(0,2));
+          arr.push(item.slice(2,3));
+          arr.push(item.slice(3,4));
+          return arr;
+        } 
+        
+        if (item.length === 3) {
+          var arr = [];
+          arr.push(item.slice(0,1));
+          arr.push(item.slice(1,2));
+          arr.push(item.slice(2,3));
+          return arr;
+        }
+      }
+       (finalArr);   
+      return finalArr;
       // expected input ex: 'co1d#s4fw2', etc
-      // expected output ['co1' 'd#s4' 'fw2'], etc
+      // expected output [[c,o,1],[d#,s,4],[f,w,2]], etc
     }
     
-    function sendNotesToPlay(index) {   
-      var arr = stringParser();
-      
-      //TODO: convert arr[index] into its own array of ["note", "duration", "octave"] (currently "notedurationoctave")
-      if (arr[index].length === 4) {
-        var arr2 = [];
-        arr2.push(arr[index].slice(0,2));
-        arr2.push(arr[index].slice(2,3));
-        arr2.push(arr[index].slice(3,4));
-        finalArr.push(arr2);
-        //console.log(finalArr);   
-      } 
-      
-      if (arr[index].length === 3) {
-        var arr2 = [];
-        arr2.push(arr[index].slice(0,1));
-        arr2.push(arr[index].slice(1,2));
-        arr2.push(arr[index].slice(2,3));
-        finalArr.push(arr2);
-        //console.log(finalArr);
-      } 
-      
-      //console.log(arr);
-      if (arr.length > index) {
+    function sendNotesToPlay(index, id) {   
+       var arr = stringParser(id);
+        
+        if (arr.length > index) {
+        play(arr[index]);
         setTimeout(function() {
-          play(finalArr[index]);
-          sendNotesToPlay(++index);
-        }, 1000)
+          play(arr[index + 1]);
+          sendNotesToPlay(++index, id);
+        }, 1000 * noteDuration(arr[index][1]))
       }
     }
     
@@ -100,14 +109,15 @@
     
     
     function play(arr) {
-     console.log(arr);
+      (arr);
 
       var octave = arr[2];
       var sustain = noteDuration(arr[1]);
       var hertz = noteHz(arr[0]);  
       var osc = ctx.createOscillator();
       var gainNode = ctx.createGain();
-           
+      
+      osc.type = 'sawtooth';     
       osc.connect(gainNode);
       gainNode.connect(ctx.destination);
       gainNode.gain.value = 0.0;
