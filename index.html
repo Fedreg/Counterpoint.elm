@@ -14,7 +14,8 @@
 <script>
 
     var ctx = new window.webkitAudioContext || new window.AudioContext;
-      
+    var finalArr = [];
+
     function stringParser() {
       var noteString = document.getElementById("note-string").value.toLowerCase();  
       var noteArr =  noteString.match(/([a-g]+#|[a-g])([whqes])(\d)/g); 
@@ -23,20 +24,40 @@
       // expected output ['co1' 'd#s4' 'fw2'], etc
     }
     
-    function sendNotesToPlay(index, arr) {   
+    function sendNotesToPlay(index) {   
       var arr = stringParser();
-      //TODO: convert arr[index] into its own array of ["note", "duration", "octave"] (currently "notedurationoctave")
       
+      //TODO: convert arr[index] into its own array of ["note", "duration", "octave"] (currently "notedurationoctave")
+      if (arr[index].length === 4) {
+        var arr2 = [];
+        arr2.push(arr[index].slice(0,2));
+        arr2.push(arr[index].slice(2,3));
+        arr2.push(arr[index].slice(3,4));
+        finalArr.push(arr2);
+        //console.log(finalArr);   
+      } 
+      
+      if (arr[index].length === 3) {
+        var arr2 = [];
+        arr2.push(arr[index].slice(0,1));
+        arr2.push(arr[index].slice(1,2));
+        arr2.push(arr[index].slice(2,3));
+        finalArr.push(arr2);
+        //console.log(finalArr);
+      } 
+      
+      //console.log(arr);
       if (arr.length > index) {
         setTimeout(function() {
-          play(arr);//arr[index]);
+          play(finalArr[index]);
           sendNotesToPlay(++index);
         }, 1000)
       }
     }
     
     function noteDuration(char) {
-      var duration = char;      
+      var duration = char;
+      var sustain;      
        if (duration === "w")
       sustain = 4
       
@@ -79,13 +100,14 @@
     
     
     function play(arr) {
-     
+     console.log(arr);
+
       var octave = arr[2];
       var sustain = noteDuration(arr[1]);
       var hertz = noteHz(arr[0]);  
       var osc = ctx.createOscillator();
       var gainNode = ctx.createGain();
-      
+           
       osc.connect(gainNode);
       gainNode.connect(ctx.destination);
       gainNode.gain.value = 0.0;
