@@ -5,8 +5,13 @@
 </head>
 <body>
   <div class="container"></div>
+  <h1>Music Maker</h1>
   <div>
-    <h1>Music Maker</h1>
+    <select id="wav-type">
+      <option value="sine">sine</option>
+      <option value="triangle">triangle</option>
+      <option value="square">square</option>
+      <option selected="sawtooth" value="sawtooth">sawtooth</option>
     <input id="ns1">
     <input id="ns2">
     <input id="ns3">
@@ -16,8 +21,10 @@
   <ul>
     <li>Enter notes as "cw4"</li>
     <li>where "c" equals the note from a-g; #s work but no bs (that's flats, not BS)</li>
-    <li>"w" equals rythmic note type; w for whole, h for half, q for quarter, o for eigth(it's complicated) s for sixteenth</li>
+    <li>"w" equals rythmic note type; w for whole, h for half, q for quarter, o for eigth(
+    it's complicated) s for sixteenth</li>
     <li>"4" equals the octave multiplier.  Any positive number works</li>
+    <li>Enter "r" for rest.  Quarter note rest would be "rq3" (the last number must be there but can be any value).</li>
    </ul>
 </body>
 <script>
@@ -26,7 +33,7 @@
    
     function stringParser(id) {
       var noteString = document.getElementById(id).value.toLowerCase();  
-      var noteArr =  noteString.match(/([a-g]+#|[a-g])([whqes])(\d)/g); 
+      var noteArr =  noteString.match(/([a-g,r]+#|[a-g,r])([whqos])(\d)/g); 
       var finalArr = noteArr.map(makeArrInArr);
 
       function makeArrInArr(item) {
@@ -46,7 +53,6 @@
           return arr;
         }
       }
-       (finalArr);   
       return finalArr;
       // expected input ex: 'co1d#s4fw2', etc
       // expected output [[c,o,1],[d#,s,4],[f,w,2]], etc
@@ -101,29 +107,36 @@
        	'a': 220.00,
        	'a#': 233.00,
        	'b': 246.94,
+       	'r': 0.0,
        	};
        	
        	var hertz = frequencies[note];
        	return hertz;
     }
     
+    function whichOctave(num) {
+      if (num === 1)
+      return num;
+      
+      else
+      return Math.pow(2, num -1);
+            console.log(num);
+    }
     
     function play(arr) {
-      (arr);
-
-      var octave = arr[2];
+      var octave = whichOctave(arr[2]);
       var sustain = noteDuration(arr[1]);
       var hertz = noteHz(arr[0]);  
       var osc = ctx.createOscillator();
       var gainNode = ctx.createGain();
       
-      osc.type = 'sawtooth';     
+      osc.type = document.getElementById('wav-type').value;     
       osc.connect(gainNode);
       gainNode.connect(ctx.destination);
       gainNode.gain.value = 0.0;
       gainNode.gain.setTargetAtTime(.75, ctx.currentTime, 0.1);
       gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustain, 0.01)
-      osc.frequency.value = hertz * octave;
+      osc.frequency.value = hertz * octave / 4;
       osc.start();
       osc.stop(ctx.currentTime + sustain + .01);
     }
