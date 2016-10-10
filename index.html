@@ -30,7 +30,25 @@
 <script>
 
     var ctx = new window.webkitAudioContext || new window.AudioContext;
-   
+    
+    //takes in formatted array, determines hertz, sustain, and octave, and sends to main play function 
+    function sendNotesToPlay(index, id) {   
+       var arr = stringParser(id);
+       var octave = whichOctave(arr[index + 1][2]);
+       var sustain = noteDuration(arr[index + 1][1]);
+       var hertz = noteHz(arr[index + 1][0]);
+        
+        if (arr.length > index) {
+        play(noteHz(arr[index][0]), noteDuration(arr[index][1]), whichOctave(arr[index][2]));
+
+        setTimeout(function() {
+          play(hertz, sustain, octave);
+          sendNotesToPlay(++index, id);
+        }, 1000 * noteDuration(arr[index][1]))
+      }
+    }
+    
+    //gets input string and formats it into array of arrays to send to sendNotesToPlay function
     function stringParser(id) {
       var noteString = document.getElementById(id).value.toLowerCase();  
       var noteArr =  noteString.match(/([a-g,r]+#|[a-g,r])([whqos])(\d)/g); 
@@ -58,18 +76,7 @@
       // expected output [[c,o,1],[d#,s,4],[f,w,2]], etc
     }
     
-    function sendNotesToPlay(index, id) {   
-       var arr = stringParser(id);
-        
-        if (arr.length > index) {
-        play(arr[index]);
-        setTimeout(function() {
-          play(arr[index + 1]);
-          sendNotesToPlay(++index, id);
-        }, 1000 * noteDuration(arr[index][1]))
-      }
-    }
-    
+    //dertermines note duration
     function noteDuration(char) {
       var duration = char;
       var sustain;      
@@ -91,7 +98,7 @@
       return sustain;
     }
     
-    
+    //determines frequency
     function noteHz(note){
       var note = note;
       var frequencies = {
@@ -114,6 +121,7 @@
        	return hertz;
     }
     
+    //determines octave number
     function whichOctave(num) {
       if (num === 1)
       return num;
@@ -123,10 +131,8 @@
             console.log(num);
     }
     
-    function play(arr) {
-      var octave = whichOctave(arr[2]);
-      var sustain = noteDuration(arr[1]);
-      var hertz = noteHz(arr[0]);  
+    //main sound generating function.  Receives attributes and creates appropriate note
+    function play(hertz, sustain, octave) {
       var osc = ctx.createOscillator();
       var gainNode = ctx.createGain();
       
