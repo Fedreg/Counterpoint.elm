@@ -16,7 +16,7 @@
     <input id="ns2">
     <input id="ns3">
     <input id="ns4">
-    <button onclick="sendNotesToPlay(0, 'ns1'), sendNotesToPlay(0, 'ns2'), sendNotesToPlay(0, 'ns3'), sendNotesToPlay(0, 'ns4')">Push Play</button>
+    <button onclick="sendNotesToPlay(1, 'ns1'), sendNotesToPlay(1, 'ns2'), sendNotesToPlay(1, 'ns3'), sendNotesToPlay(1, 'ns4')">Push Play</button>
   </div>
   <ul>
     <li>Enter notes as "cw4"</li>
@@ -32,16 +32,19 @@
     var ctx = new window.webkitAudioContext || new window.AudioContext;
     
     //takes in formatted array, determines hertz, sustain, and octave, and sends to main play function 
-    function sendNotesToPlay(index, id) {   
-       var arr = stringParser(id);
-       var octave = whichOctave(arr[index + 1][2]);
-       var sustain = noteDuration(arr[index + 1][1]);
-       var hertz = noteHz(arr[index + 1][0]);
+    function sendNotesToPlay(index, id) {
+        var arr = stringParser(id);
         
         if (arr.length > index) {
-        play(noteHz(arr[index][0]), noteDuration(arr[index][1]), whichOctave(arr[index][2]));
-
+        
+          if (index === 1) {
+           play(noteHz(arr[index -1][0]), noteDuration(arr[index -1][1]), whichOctave(arr[index -1][2]));
+          }
+          
         setTimeout(function() {
+          var octave = whichOctave(arr[index][2]);
+          var sustain = noteDuration(arr[index][1]);
+          var hertz = noteHz(arr[index][0]);
           play(hertz, sustain, octave);
           sendNotesToPlay(++index, id);
         }, 1000 * noteDuration(arr[index][1]))
@@ -51,27 +54,33 @@
     //gets input string and formats it into array of arrays to send to sendNotesToPlay function
     function stringParser(id) {
       var noteString = document.getElementById(id).value.toLowerCase();  
-      var noteArr =  noteString.match(/([a-g,r]+#|[a-g,r])([whqos])(\d)/g); 
-      var finalArr = noteArr.map(makeArrInArr);
-
-      function makeArrInArr(item) {
-        if (item.length === 4) {
-          var arr = [];
-          arr.push(item.slice(0,2));
-          arr.push(item.slice(2,3));
-          arr.push(item.slice(3,4));
-          return arr;
-        } 
-        
-        if (item.length === 3) {
-          var arr = [];
-          arr.push(item.slice(0,1));
-          arr.push(item.slice(1,2));
-          arr.push(item.slice(2,3));
-          return arr;
+      if (noteString.length !== 0) {
+        var noteArr =  noteString.match(/([a-g,r]+#|[a-g,r])([whqos])(\d)/g); 
+        var finalArr = noteArr.map(makeArrInArr);
+      
+        function makeArrInArr(item) {
+          if (item.length === 4) {
+            var arr = [];
+            arr.push(item.slice(0,2));
+            arr.push(item.slice(2,3));
+            arr.push(item.slice(3,4));
+            return arr;
+          } 
+          
+          if (item.length === 3) {
+            var arr = [];
+            arr.push(item.slice(0,1));
+            arr.push(item.slice(1,2));
+            arr.push(item.slice(2,3));
+            return arr;
+          }
         }
+        return finalArr;
       }
-      return finalArr;
+      
+      else {
+        return 1;
+      }
       // expected input ex: 'co1d#s4fw2', etc
       // expected output [[c,o,1],[d#,s,4],[f,w,2]], etc
     }
@@ -128,7 +137,6 @@
       
       else
       return Math.pow(2, num -1);
-            console.log(num);
     }
     
     //main sound generating function.  Receives attributes and creates appropriate note
