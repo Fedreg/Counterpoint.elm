@@ -1,35 +1,4 @@
-<html>
-<head>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
-    <title></title>
-</head>
-<body>
-  <div class="container"></div>
-  <h1>Music Maker</h1>
-  <div>
-    <select id="wav-type">
-      <option value="sine">sine</option>
-      <option value="triangle">triangle</option>
-      <option value="square">square</option>
-      <option selected="sawtooth" value="sawtooth">sawtooth</option>
-    <input id="ns1">
-    <input id="ns2">
-    <input id="ns3">
-    <input id="ns4">
-    <button onclick="sendNotesToPlay(1, 'ns1'), sendNotesToPlay(1, 'ns2'), sendNotesToPlay(1, 'ns3'), sendNotesToPlay(1, 'ns4')">Push Play</button>
-  </div>
-  <ul>
-    <li>Enter notes as "cw4"</li>
-    <li>where "c" equals the note from a-g; #s work but no bs (that's flats, not BS)</li>
-    <li>"w" equals rythmic note type; w for whole, h for half, q for quarter, o for eigth(
-    it's complicated) s for sixteenth</li>
-    <li>"4" equals the octave multiplier.  Any positive number works</li>
-    <li>Enter "r" for rest.  Quarter note rest would be "rq3" (the last number must be there but can be any value).</li>
-   </ul>
-</body>
-<script>
-
-    var ctx = new window.webkitAudioContext || new window.AudioContext;
+var ctx = new window.webkitAudioContext || new window.AudioContext;
     
     //takes in formatted array, determines hertz, sustain, and octave, and sends to main play function 
     function sendNotesToPlay(index, id) {
@@ -141,6 +110,7 @@
     
     //main sound generating function.  Receives attributes and creates appropriate note
     function play(hertz, sustain, octave) {
+      console.log("I Played!!!: " + hertz + sustain + octave);
       var osc = ctx.createOscillator();
       var gainNode = ctx.createGain();
       
@@ -154,6 +124,3 @@
       osc.start();
       osc.stop(ctx.currentTime + sustain + .01);
     }
-    
-</script>
-</html>
