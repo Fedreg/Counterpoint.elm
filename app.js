@@ -2,24 +2,23 @@ var ctx = new window.webkitAudioContext || new window.AudioContext;
     
     //takes in formatted array, determines hertz, sustain, and octave, and sends to main play function 
     function sendNotesToPlay(index, id) {
-        var arr = stringParser(id);
+      var arr = stringParser(id);
+      if (arr !== undefined) {  
+      if (index === 1) 
+      play(noteHz(arr[index -1][0]), noteDuration(arr[index -1][1]), whichOctave(arr[index -1][2])); 
         
-        if (arr.length > index) {
+      if (arr.length > index) {
         
-          if (index === 1) {
-           play(noteHz(arr[index -1][0]), noteDuration(arr[index -1][1]), whichOctave(arr[index -1][2]));
-          }
-          
         setTimeout(function() {
           var octave = whichOctave(arr[index][2]);
           var sustain = noteDuration(arr[index][1]);
           var hertz = noteHz(arr[index][0]);
           play(hertz, sustain, octave);
           sendNotesToPlay(++index, id);
-        }, 1000 * noteDuration(arr[index][1]))
+        }, 1000 * noteDuration(arr[index -1][1]))
       }
     }
-    
+    }
     //gets input string and formats it into array of arrays to send to sendNotesToPlay function
     function stringParser(id) {
       var noteString = document.getElementById(id).value.toLowerCase();  
@@ -45,10 +44,7 @@ var ctx = new window.webkitAudioContext || new window.AudioContext;
           }
         }
         return finalArr;
-      }
-      
-      else {
-        return 1;
+        console.log(finalArr);
       }
       // expected input ex: 'co1d#s4fw2', etc
       // expected output [[c,o,1],[d#,s,4],[f,w,2]], etc
@@ -78,7 +74,6 @@ var ctx = new window.webkitAudioContext || new window.AudioContext;
     
     //determines frequency
     function noteHz(note){
-      var note = note;
       var frequencies = {
        	'c': 130.81,
        	'c#': 139.00,
@@ -110,9 +105,8 @@ var ctx = new window.webkitAudioContext || new window.AudioContext;
     
     //main sound generating function.  Receives attributes and creates appropriate note
     function play(hertz, sustain, octave) {
-      console.log("I Played!!!: " + hertz + sustain + octave);
-      var osc = ctx.createOscillator();
-      var gainNode = ctx.createGain();
+      const osc = ctx.createOscillator();
+      const gainNode = ctx.createGain();
       
       osc.type = document.getElementById('wav-type').value;     
       osc.connect(gainNode);

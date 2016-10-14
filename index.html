@@ -1,6 +1,11 @@
 <html>
 <head>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  .input {width: 90%; }
+  #wav-type {display: block;}
+</style>
+
+
     <title></title>
 </head>
 <body>
@@ -12,12 +17,13 @@
       <option value="triangle">triangle</option>
       <option value="square">square</option>
       <option selected="sawtooth" value="sawtooth">sawtooth</option>
-    <input id="ns1">
-    <input id="ns2">
-    <input id="ns3">
-    <input id="ns4">
-    <button onclick="sendNotesToPlay(1, 'ns1'), sendNotesToPlay(1, 'ns2'), sendNotesToPlay(1, 'ns3'), sendNotesToPlay(1, 'ns4')">Push Play</button>
   </div>
+  <div><input  class="input" placeholder="enter notes to play" id="ns1"></div>
+  <div><input  class="input" placeholder="format: NOTE DURATION OCTAVE" id="ns2"></div>
+  <div><input  class="input" placeholder="ex: aq4" id="ns3"></div>
+  <div><input  class="input" placeholder="ex: es3ds3es3fs3" id="ns4"></div>
+  <button onclick="sendNotesToPlay(1, 'ns1'), sendNotesToPlay(1, 'ns2'), sendNotesToPlay(1, 'ns3'), sendNotesToPlay(1, 'ns4')">Push Play</button>
+  
   <ul>
     <li>Enter notes as "cw4"</li>
     <li>where "c" equals the note from a-g; #s work but no bs (that's flats, not BS)</li>
@@ -26,6 +32,7 @@
     <li>"4" equals the octave multiplier.  Any positive number works</li>
     <li>Enter "r" for rest.  Quarter note rest would be "rq3" (the last number must be there but can be any value).</li>
    </ul>
-</body>
-<script src="app.js" type="text/javascript"></script> 
+   
+  </body>
+  <script src="app.js" type="text/javascript"></script> 
 </html>
