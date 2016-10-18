@@ -51,48 +51,13 @@ update msg model =
             { model | notesToBeParsed = model.initialNotes }
 
 
-parseNotes notesToBeParsed =
-    find All (regex "([a-g,r]+#|[a-g,r])([whqos])(\\d)/g") notesToBeParsed
+parseNotes string =
+    find All (regex "([a-g,r]+#|[a-g,r])([whqos])(\\d)") string
+        |> List.map .match
 
 
 finalArr =
-    map parseNotes makeArrInArr
-
-
-makeArrInArr parseNotes =
-    if length parseNotes == 3 then
-        let
-            arr =
-                []
-        in
-            (slice 2 3 parseNotes)
-                :: arr
-                    (slice 1 2 parseNotes)
-                :: arr
-                    (slice 0 1 parseNotes)
-                :: arr
-    else if length parseNotes == 4 then
-        let
-            arr =
-                []
-        in
-            (slice 3 4 parseNotes)
-                :: arr
-                    (slice 2 3 parseNotes)
-                :: arr
-                    (slice 0 2 parseNotes)
-                :: arr
-    else
-        let
-            arr =
-                []
-        in
-            "4"
-                :: arr
-                    "s"
-                :: arr
-                    "r"
-                :: arr
+    List.map (String.toList >> List.map String.fromChar)
 
 
 
