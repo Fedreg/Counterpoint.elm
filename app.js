@@ -29,7 +29,7 @@ function stringParser(id) {
     var noteString = document.getElementById(id).value.toLowerCase();  
     
     if (noteString.length !== 0) {
-        var noteArr =  noteString.match(/([a-g,r]+#|[a-g,r])([whqos])(\d)/g); 
+        var noteArr =  noteString.match(/([a-g,r]+#|[a-g,r])([whqgs])(\d)/g); 
         var finalArr = noteArr.map(makeArrInArr);
       
         function makeArrInArr(item) {
@@ -74,7 +74,7 @@ function noteDuration(char) {
     if (duration === "q")
     sustain = 1
 
-    if (duration === "o")
+    if (duration === "e")
     sustain = .5
 
     if (duration === "s")
@@ -138,9 +138,13 @@ function play(hertz, sustain, octave) {
 function addPart(index) {
     ++index;
     let n = "ns" + index;
+    let input = document.createElement('input');
+    input.placeholder = `Instrument ${index}: enter notes to play`;
+    input.id = `${n}`;
+    input.className = 'input'
     functionCaller += ` sendNotesToPlay(1, '${n}');`
 
-    document.getElementById('input-div').innerHTML += `<input class="input" placeholder="Instrument ${index}: enter notes to play" id=${n}>`;
+    document.getElementById('input-div').appendChild(input); 
     document.getElementById('instrument-button').setAttribute("onclick",`addPart(${index})`);
     document.getElementById('play-button').setAttribute("onclick", functionCaller);
     
