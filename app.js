@@ -18,7 +18,7 @@ function sendNotesToPlay(index, id) {
                 var hertz = noteHz(arr[index][0]);
                 play(hertz, sustain, octave);
                 sendNotesToPlay(++index, id);
-            }, 1000 * noteDuration(arr[index -1][1]))
+            }, tempo() * noteDuration(arr[index -1][1]))
         }
     }
 }
@@ -64,23 +64,26 @@ function stringParser(id) {
 function noteDuration(char) {
     var duration = char;
     var sustain;      
-    
+    let multiplier = tempo(); 
+
     if (duration === "w")
-    sustain = 4
+    sustain = 4 * muliplier; 
 
     if (duration === "h")
-    sustain = 2
+    sustain = 2 * multiplier;
 
     if (duration === "q")
-    sustain = 1
+    sustain = 1 * multiplier;
 
     if (duration === "e")
-    sustain = .5
+    sustain = .5 * multiplier;
 
     if (duration === "s")
-    sustain = .25
+        sustain = .25 * multiplier;
 
-    return sustain;
+    console.log(sustain);
+
+return sustain;
 }
     
 
@@ -117,6 +120,13 @@ function whichOctave(num) {
 }
     
 
+function tempo() {
+    let bpm = document.getElementById("tempo").value;
+    let tempo = 60 / bpm  * 1000;
+    return tempo;
+}
+
+
 //main sound generating function.  Receives attributes and creates appropriate note
 function play(hertz, sustain, octave) {
     const osc = ctx.createOscillator();
@@ -141,7 +151,7 @@ function addPart(index) {
     let input = document.createElement('input');
     input.placeholder = `Instrument ${index}: enter notes to play`;
     input.id = `${n}`;
-    input.className = 'input'
+    input.type = 'text'
     functionCaller += ` sendNotesToPlay(1, '${n}');`
 
     document.getElementById('input-div').appendChild(input); 
