@@ -1,5 +1,4 @@
 var ctx = new window.AudioContext //|| new window.webkitAudioContext;
-let functionCaller = "sendNotesToPlay(1, 'ns1');";
 
 
 //takes in formatted array, determines hertz, sustain, and octave, and sends to main play function 
@@ -18,10 +17,11 @@ function sendNotesToPlay(index, id) {
                 var hertz = noteHz(arr[index][0]);
                 play(hertz, sustain, octave);
                 sendNotesToPlay(++index, id);
-            }, tempo() * noteDuration(arr[index -1][1]))
+            }, tempo() * 1000 * noteDuration(arr[index -1][1]));
         }
     }
 }
+
 
 
 //gets input string and formats it into array of arrays to send to sendNotesToPlay function
@@ -53,39 +53,37 @@ function stringParser(id) {
         }
         
         return finalArr;
-        console.log(finalArr);
     }
       // expected input ex: 'co1d#s4fw2', etc
       // expected output [[c,o,1],[d#,s,4],[f,w,2]], etc
 }
-    
+
+
 
 //dertermines note duration
 function noteDuration(char) {
     var duration = char;
     var sustain;      
-    let multiplier = tempo(); 
 
     if (duration === "w")
-    sustain = 4 * muliplier; 
+    sustain = 4
 
     if (duration === "h")
-    sustain = 2 * multiplier;
+    sustain = 2
 
     if (duration === "q")
-    sustain = 1 * multiplier;
+    sustain = 1
 
     if (duration === "e")
-    sustain = .5 * multiplier;
+    sustain = .5
 
     if (duration === "s")
-        sustain = .25 * multiplier;
-
-    console.log(sustain);
+    sustain = .25
 
 return sustain;
 }
-    
+
+
 
 //determines frequency
 function noteHz(note){
@@ -104,11 +102,11 @@ function noteHz(note){
        	'b': 246.94,
        	'r': 0.0,
     };
-       	
     var hertz = frequencies[note];
     return hertz;
 }
-    
+
+
 
 //determines octave number
 function whichOctave(num) {
@@ -118,30 +116,39 @@ function whichOctave(num) {
     else
     return Math.pow(2, num -1);
 }
-    
+
+
 
 function tempo() {
     let bpm = document.getElementById("tempo").value;
-    let tempo = 60 / bpm  * 1000;
+    let tempo = 60 / bpm * .5;
     return tempo;
 }
+
 
 
 //main sound generating function.  Receives attributes and creates appropriate note
 function play(hertz, sustain, octave) {
     const osc = ctx.createOscillator();
     const gainNode = ctx.createGain();
-
+    const sustainF = sustain * tempo();
+    
     osc.type = document.getElementById('wav-type').value;     
     osc.connect(gainNode);
     gainNode.connect(ctx.destination);
     gainNode.gain.value = 0.0;
     gainNode.gain.setTargetAtTime(.75, ctx.currentTime, 0.1);
-    gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustain, 0.01)
+    gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustainF, 0.01)
     osc.frequency.value = hertz * octave / 4;
     osc.start();
-    osc.stop(ctx.currentTime + sustain + .01);
+    osc.stop(ctx.currentTime + sustainF + .01);
 }
+
+
+
+
+let functionCaller = "sendNotesToPlay(1, 'ns1');";
+
 
 
 //adds extra input to website for generation of additional musical voices.
@@ -158,6 +165,4 @@ function addPart(index) {
     document.getElementById('instrument-button').setAttribute("onclick",`addPart(${index})`);
     document.getElementById('play-button').setAttribute("onclick", functionCaller);
     
-    console.log("index: " + index);
-    console.log(functionCaller);
 }

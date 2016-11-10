@@ -20,7 +20,7 @@
     <div style="text-align: center;">
         <button class="button button-outline" id="play-button" onclick="sendNotesToPlay(1, 'ns1');">Push Play</button>
         <button class="button button-outline" id="instrument-button" onclick="addPart(1)">Add Instrument</button>
-        <input class="button button-outline"  id="tempo" placeholder="120 BPM">
+        <input class="button button-outline"  id="tempo" placeholder="enter a tempo" value="120">
     </div>
     <ul>
         <li>Enter notes as "cw4"</li>
@@ -37,9 +37,14 @@
             color: #4f4284;
         }
 
-        .button-outline {
+        .button .button-outline {
             color: black;
         }
+
+        #tempo {
+            width: 150px;
+        }
+
     </style>
     <script src="app.js" type="text/javascript"></script> 
 </html>
