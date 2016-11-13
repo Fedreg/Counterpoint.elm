@@ -1,4 +1,7 @@
-var ctx = new window.AudioContext //|| new window.webkitAudioContext;
+const ctx = new window.AudioContext //|| new window.webkitAudioContext;
+const cvs = document.getElementById('canvas').getContext("2d");
+let functionCaller = "sendNotesToPlay(1, 'ns1');";
+let blockX = 5;
 
 
 //takes in formatted array, determines hertz, sustain, and octave, and sends to main play function 
@@ -6,8 +9,10 @@ function sendNotesToPlay(index, id) {
     var arr = stringParser(id);
    
     if (arr !== undefined) {  
-        if (index === 1) 
-        play(noteHz(arr[index -1][0]), noteDuration(arr[index -1][1]), whichOctave(arr[index -1][2])); 
+        if (index === 1) {
+            play(noteHz(arr[index -1][0]), noteDuration(arr[index -1][1]), whichOctave(arr[index -1][2])); 
+            noteDrawer(noteHz(arr[index -1][0]), noteDuration(arr[index -1][1]), arr[index -1][2]); 
+        }
         
         if (arr.length > index) {
         
@@ -15,7 +20,14 @@ function sendNotesToPlay(index, id) {
                 var octave = whichOctave(arr[index][2]);
                 var sustain = noteDuration(arr[index][1]);
                 var hertz = noteHz(arr[index][0]);
+
+                //sends data to WebAudio player
                 play(hertz, sustain, octave);
+
+                //sends data for notes to be drawn
+                noteDrawer(hertz,sustain, arr[index][2]);
+
+                //restarts function to play next note
                 sendNotesToPlay(++index, id);
             }, tempo() * 1000 * noteDuration(arr[index -1][1]));
         }
@@ -29,7 +41,7 @@ function stringParser(id) {
     var noteString = document.getElementById(id).value.toLowerCase();  
     
     if (noteString.length !== 0) {
-        var noteArr =  noteString.match(/([a-g,r]+#|[a-g,r])([whqgs])(\d)/g); 
+        var noteArr =  noteString.match(/([a-g,r]+#|[a-g,r])([whqes])(\d)/g); 
         var finalArr = noteArr.map(makeArrInArr);
       
         function makeArrInArr(item) {
@@ -146,11 +158,6 @@ function play(hertz, sustain, octave) {
 
 
 
-
-let functionCaller = "sendNotesToPlay(1, 'ns1');";
-
-
-
 //adds extra input to website for generation of additional musical voices.
 function addPart(index) {
     ++index;
@@ -164,5 +171,19 @@ function addPart(index) {
     document.getElementById('input-div').appendChild(input); 
     document.getElementById('instrument-button').setAttribute("onclick",`addPart(${index})`);
     document.getElementById('play-button').setAttribute("onclick", functionCaller);
-    
+}
+
+
+
+function noteDrawer(hertz, sustain, octave) {
+
+    let blockLength = sustain * 5;
+    let blockY = 70 - ((hertz / 10) * (octave * .5));
+    cvs.fillStyle = "red";
+    cvs.beginPath();
+    cvs.rect(blockX, blockY, blockLength, 10, Math.PI*2, true); 
+    cvs.closePath();
+    cvs.fill();
+    blockX += blockLength + 2;
+    console.log(sustain, blockLength, blockX);
 }
