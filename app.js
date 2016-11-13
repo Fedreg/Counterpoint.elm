@@ -1,17 +1,25 @@
+//ORDER OF EXECUTION:
+//when the "Press PLay" button is pushed, sendNotesToPlay is called along with its parameters: an initial index of 1, the id of the input where notes are entered (ns1 initially), and the id of the canvas element where notes should be drawn.
+//sendNotesToPlay calls stringParser which breaks up the text entered into corresponding notes, durations, and octaves.  
+//stringParser returns an array of arrays.  At each index of stringParser the corresponding array is referenced for exact frequency, note duration, and octave value before being sent at a set interval (depending on tempo) to the play function which creates the sounds.
+//if the add additional instrument button is pressed, a new input and corresponding canvas is added to the DOM.
+
+
 const ctx = new window.AudioContext //|| new window.webkitAudioContext;
-const cvs = document.getElementById('canvas').getContext("2d");
-let functionCaller = "sendNotesToPlay(1, 'ns1');";
-let blockX = 5;
+let functionCaller = "sendNotesToPlay(1, 'ns1', 'cvs1', 5);";
+
 
 
 //takes in formatted array, determines hertz, sustain, and octave, and sends to main play function 
-function sendNotesToPlay(index, id) {
+function sendNotesToPlay(index, id, cvsId, blockX) {
     var arr = stringParser(id);
-   
+
+    //initial send, before setTimeout takes effect.
     if (arr !== undefined) {  
         if (index === 1) {
             play(noteHz(arr[index -1][0]), noteDuration(arr[index -1][1]), whichOctave(arr[index -1][2])); 
-            noteDrawer(noteHz(arr[index -1][0]), noteDuration(arr[index -1][1]), arr[index -1][2]); 
+            noteDrawer(noteHz(arr[index -1][0]), noteDuration(arr[index -1][1]), arr[index -1][2], cvsId, blockX); 
+            blockX += (noteDuration(arr[index -1][1]) * 5);
         }
         
         if (arr.length > index) {
@@ -25,10 +33,11 @@ function sendNotesToPlay(index, id) {
                 play(hertz, sustain, octave);
 
                 //sends data for notes to be drawn
-                noteDrawer(hertz,sustain, arr[index][2]);
+                noteDrawer(hertz, sustain, arr[index][2], cvsId, blockX);
+                blockX += (sustain * 5);
 
                 //restarts function to play next note
-                sendNotesToPlay(++index, id);
+                sendNotesToPlay(++index, id, cvsId, blockX);
             }, tempo() * 1000 * noteDuration(arr[index -1][1]));
         }
     }
@@ -131,6 +140,7 @@ function whichOctave(num) {
 
 
 
+//determines song tempo
 function tempo() {
     let bpm = document.getElementById("tempo").value;
     let tempo = 60 / bpm * .5;
@@ -158,32 +168,47 @@ function play(hertz, sustain, octave) {
 
 
 
-//adds extra input to website for generation of additional musical voices.
+//adds extra input and canvas to website for generation of additional musical voices.
 function addPart(index) {
     ++index;
-    let n = "ns" + index;
+    
+    //create input and props
     let input = document.createElement('input');
     input.placeholder = `Instrument ${index}: enter notes to play`;
-    input.id = `${n}`;
-    input.type = 'text'
-    functionCaller += ` sendNotesToPlay(1, '${n}');`
+    input.id = `ns${index}`;
+    input.type = 'text';
+    
+    //create canvas and props
+    let canvas = document.createElement('canvas');
+    canvas.height = '75';
+    canvas.width = '1000';
+    canvas.id = `cvs${index}`;
+    canvas.setAttribute = ('class', 'canvas');
+
+    //builds up the function that is called when "play" button is pressed.  Each time a new instrument is added, another function call is added.
+    functionCaller += ` sendNotesToPlay(1, 'ns${index}', 'cvs${index}', 5);`
 
     document.getElementById('input-div').appendChild(input); 
+    document.getElementById('input-div').appendChild(canvas); 
     document.getElementById('instrument-button').setAttribute("onclick",`addPart(${index})`);
     document.getElementById('play-button').setAttribute("onclick", functionCaller);
 }
 
 
+//Sets up the canvas and draws the notes for each instrument.
+function noteDrawer(hertz, sustain, octave, id, pos) {
 
-function noteDrawer(hertz, sustain, octave) {
+    const cvs = document.getElementById(`${id}`).getContext("2d");
 
     let blockLength = sustain * 5;
+    let blockX = pos;
     let blockY = 70 - ((hertz / 10) * (octave * .5));
-    cvs.fillStyle = "red";
+
+    cvs.fillStyle = "blue";
     cvs.beginPath();
-    cvs.rect(blockX, blockY, blockLength, 10, Math.PI*2, true); 
+    cvs.rect(blockX, blockY, blockLength, 10); 
     cvs.closePath();
     cvs.fill();
-    blockX += blockLength + 2;
-    console.log(sustain, blockLength, blockX);
+
+    console.log(sustain, blockLength, blockX, id, pos);
 }
