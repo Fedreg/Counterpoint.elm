@@ -172,6 +172,8 @@ function play(hertz, sustain, octave) {
 function addPart(index) {
     ++index;
     
+    let color = randomColor();
+    
     //create input and props
     let input = document.createElement('input');
     input.placeholder = `Instrument ${index}: enter notes to play`;
@@ -183,15 +185,15 @@ function addPart(index) {
     canvas.height = '75';
     canvas.width = '1000';
     canvas.id = `cvs${index}`;
-    canvas.setAttribute = ('class', 'canvas');
 
     //builds up the function that is called when "play" button is pressed.  Each time a new instrument is added, another function call is added.
     functionCaller += ` sendNotesToPlay(1, 'ns${index}', 'cvs${index}', 5);`
 
-    document.getElementById('input-div').appendChild(input); 
     document.getElementById('input-div').appendChild(canvas); 
+    document.getElementById('input-div').appendChild(input); 
     document.getElementById('instrument-button').setAttribute("onclick",`addPart(${index})`);
     document.getElementById('play-button').setAttribute("onclick", functionCaller);
+    console.log(color);
 }
 
 
@@ -210,5 +212,4 @@ function noteDrawer(hertz, sustain, octave, id, pos) {
     cvs.closePath();
     cvs.fill();
 
-    console.log(sustain, blockLength, blockX, id, pos);
 }
