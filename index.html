@@ -32,25 +32,29 @@
 </div>
 </body>
     <style>
-        * {
+       * {
             font-family: 'Roboto', 'sans-serif';
         }
-
         body {
             background-color: #333;
         }
-
         #wrapper {
             height: 100%;
             width: 100%;
             color: #fff;
             background-color: #333;
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: column;
+                    flex-direction: column;
+            -webkit-box-pack: center;
+                -ms-flex-pack: center;
+                    justify-content: center;
             text-transform: uppercase;
         }
-
         .button {
             color: black;
             background-color: #333;
@@ -62,11 +66,10 @@
             padding: 2px;
             border: .5px solid #999;
         }
-
         .canvas {
+            -webkit-transition: 1s ease-out;
             transition: 1s ease-out;
         }
-
         .instrument-div {
             width: 96%;
             height: 125px;
@@ -76,12 +79,17 @@
             
             padding: 5px;
             margin: 10px;
+            display: -webkit-box;
+            display: -ms-flexbox;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: column;
+                    flex-direction: column;
+            -webkit-box-pack: center;
+                -ms-flex-pack: center;
+                    justify-content: center;
         }
-
-
         .input {
             width: 85%;
             height: 20px;
@@ -91,7 +99,6 @@
             background-color: #333;
             color: #fff;
         }
-
         .button-div {
             text-align: center;
             padding-top: 10px;
