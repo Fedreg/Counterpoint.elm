@@ -7,6 +7,8 @@
 
 const ctx = new window.AudioContext //|| new window.webkitAudioContext;
 let functionCaller = "sendNotesToPlay(1, 'ns1', 'cvs1', 5);";
+let cvs1 = document.getElementById("cvs1");
+cvs1.width = window.innerWidth;
 
 
 
@@ -19,7 +21,7 @@ function sendNotesToPlay(index, id, cvsId, blockX) {
         if (index === 1) {
             play(noteHz(arr[index -1][0]), noteDuration(arr[index -1][1]), whichOctave(arr[index -1][2])); 
             noteDrawer(noteHz(arr[index -1][0]), noteDuration(arr[index -1][1]), arr[index -1][2], cvsId, blockX); 
-            blockX += (noteDuration(arr[index -1][1]) * 5);
+            blockX += (noteDuration(arr[index -1][1]) * 10);
         }
         
         if (arr.length > index) {
@@ -34,7 +36,7 @@ function sendNotesToPlay(index, id, cvsId, blockX) {
 
                 //sends data for notes to be drawn
                 noteDrawer(hertz, sustain, arr[index][2], cvsId, blockX);
-                blockX += (sustain * 5);
+                blockX += (sustain * 10);
 
                 //restarts function to play next note
                 sendNotesToPlay(++index, id, cvsId, blockX);
@@ -172,25 +174,29 @@ function play(hertz, sustain, octave) {
 function addPart(index) {
     ++index;
     
-    let color = randomColor();
     
     //create input and props
+    let div = document.createElement('div');
+    div.className = 'instrument-div';
+
     let input = document.createElement('input');
     input.placeholder = `Instrument ${index}: enter notes to play`;
     input.id = `ns${index}`;
     input.type = 'text';
+    input.className = 'input';
     
     //create canvas and props
     let canvas = document.createElement('canvas');
     canvas.height = '75';
-    canvas.width = '1000';
+    canvas.width = window.innerWidth;
     canvas.id = `cvs${index}`;
 
     //builds up the function that is called when "play" button is pressed.  Each time a new instrument is added, another function call is added.
     functionCaller += ` sendNotesToPlay(1, 'ns${index}', 'cvs${index}', 5);`
 
-    document.getElementById('input-div').appendChild(canvas); 
-    document.getElementById('input-div').appendChild(input); 
+    div.appendChild(canvas);
+    div.appendChild(input);
+    document.getElementById('input-div').appendChild(div); 
     document.getElementById('instrument-button').setAttribute("onclick",`addPart(${index})`);
     document.getElementById('play-button').setAttribute("onclick", functionCaller);
     console.log(color);
@@ -202,13 +208,17 @@ function noteDrawer(hertz, sustain, octave, id, pos) {
 
     const cvs = document.getElementById(`${id}`).getContext("2d");
 
-    let blockLength = sustain * 5;
+    let blockLength = sustain * 10;
     let blockX = pos;
     let blockY = 70 - ((hertz / 10) * (octave * .5));
 
-    cvs.fillStyle = "blue";
+    cvs.fillStyle = randomColor();
+    cvs.shadowOffsetX = 2;
+    cvs.shadowOffsetY = 2;
+    cvs.shadowBlur = 5;
+    cvs.shadowColor = "rgba(0, 0, 0, 0.5)";
     cvs.beginPath();
-    cvs.rect(blockX, blockY, blockLength, 10); 
+    cvs.rect(blockX, blockY, blockLength, 20); 
     cvs.closePath();
     cvs.fill();
 

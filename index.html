@@ -1,27 +1,26 @@
 <html>
 <head>
-    <title>JS Music Maker</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.1.0/milligram.css">
+    <title>JS MUSIC MAKER</title>
+    <link href="//fonts.googleapis.com/css?family=Roboto&subset=latin" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div id="wrapper">
     <h1 style="text-align: center;">JS Music Maker</h1>
-    <div>
-        <select id="wav-type">
+    <div id="input-div">
+        <div class="instrument-div">
+            <canvas id="cvs1" height="75" width=window.innerWidth class="canvas" ></canvas> 
+            <input class="input" type="text"  placeholder="Instrument 1: enter notes to play" id="ns1"> </div>
+        </div>
+    <div class="button-div">
+        <button class="button" id="play-button" onclick="sendNotesToPlay(1, 'ns1', 'cvs1', 5);">Push Play</button>
+        <button class="button" id="instrument-button" onclick="addPart(1)">Add Instrument</button>
+        <input class="button"  id="tempo" placeholder="enter a tempo" value="120">
+        <select class="button" id="wav-type">
             <option value="sine">sine</option>
             <option value="triangle">triangle</option>
             <option value="square">square</option>
             <option selected="sawtooth" value="sawtooth">sawtooth</option>
         </select>
-    </div>
-    <div id="input-div">
-        <canvas id="cvs1" class="canvas" height="75" width="1000"></canvas>
-        <input  type="text"  placeholder="Instrument 1: enter notes to play" id="ns1">
-    </div>
-    <div style="text-align: center;">
-        <button class="button button-outline" id="play-button" onclick="sendNotesToPlay(1, 'ns1', 'cvs1', 5);">Push Play</button>
-        <button class="button button-outline" id="instrument-button" onclick="addPart(1)">Add Instrument</button>
-        <input class="button button-outline"  id="tempo" placeholder="enter a tempo" value="120">
     </div>
     <ul>
         <li>Enter notes as "cw4"</li>
@@ -33,21 +32,69 @@
 </div>
 </body>
     <style>
+        * {
+            font-family: 'Roboto', 'sans-serif';
+        }
+
+        body {
+            background-color: #333;
+        }
+
         #wrapper {
-            height: 100vh;
-            color: #4f4284;
+            height: 100%;
+            width: 100%;
+            color: #fff;
+            background-color: #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-transform: uppercase;
         }
 
-        .button .button-outline {
+        .button {
             color: black;
-        }
-
-        #tempo {
+            background-color: #333;
             width: 150px;
+            color: #fff;
+            text-align: center;
+            text-transform: uppercase;
+            box-sizing: border-box;
+            padding: 2px;
+            border: .5px solid #999;
         }
 
         .canvas {
             transition: 1s ease-out;
+        }
+
+        .instrument-div {
+            width: 96%;
+            height: 125px;
+            background-color: #333;
+            box-shadow: -5px 5px 10px rgba(0,0,0,0.4),
+            0.5px -0.5px 1px rgba(0,0,0,0.4);
+            
+            padding: 5px;
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+
+        .input {
+            width: 85%;
+            height: 20px;
+            border: none;
+            text-alignment: center;
+            margin: 0 auto;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .button-div {
+            text-align: center;
+            padding-top: 10px;
         }
     </style>
     <script src="app.js" type="text/javascript"></script> 
