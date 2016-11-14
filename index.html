@@ -5,7 +5,7 @@
 </head>
 <body>
 <div id="wrapper">
-    <h1 style="text-align: center;">JS Music Maker</h1>
+    <h1 >JS Music Maker</h1>
     <div id="input-div">
         <div class="instrument-div">
             <canvas id="cvs1" height="75" width=window.innerWidth class="canvas" ></canvas> 
@@ -34,15 +34,26 @@
     <style>
        * {
             font-family: 'Roboto', 'sans-serif';
+            transition: 1s ease-out;
         }
+
         body {
-            background-color: #333;
+            background-color: #212121;
         }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+            border-bottom: 2px solid #009688;
+            width: 300px;
+            margin: 0 15px 20px;
+        }
+
         #wrapper {
             height: 100%;
             width: 100%;
             color: #fff;
-            background-color: #333;
+            background-color: #212121;
             display: -webkit-box;
             display: -ms-flexbox;
             display: flex;
@@ -55,28 +66,30 @@
                     justify-content: center;
             text-transform: uppercase;
         }
+
         .button {
             color: black;
-            background-color: #333;
+            background-color: #212121;
+            background: none;
             width: 150px;
-            color: #fff;
+            color: #009688;
             text-align: center;
             text-transform: uppercase;
             box-sizing: border-box;
             padding: 2px;
             border: .5px solid #999;
         }
+
         .canvas {
             -webkit-transition: 1s ease-out;
             transition: 1s ease-out;
         }
+
         .instrument-div {
             width: 96%;
             height: 125px;
-            background-color: #333;
-            box-shadow: -5px 5px 10px rgba(0,0,0,0.4),
-            0.5px -0.5px 1px rgba(0,0,0,0.4);
-            
+            background-color: #212121;
+            border: 0.5px solid #009688;
             padding: 5px;
             margin: 10px;
             display: -webkit-box;
@@ -90,15 +103,17 @@
                 -ms-flex-pack: center;
                     justify-content: center;
         }
+
         .input {
             width: 85%;
             height: 20px;
             border: none;
             text-alignment: center;
             margin: 0 auto;
-            background-color: #333;
+            background-color: #212121;
             color: #fff;
         }
+
         .button-div {
             text-align: center;
             padding-top: 10px;

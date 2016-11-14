@@ -5,9 +5,9 @@
 //if the add additional instrument button is pressed, a new input and corresponding canvas is added to the DOM.
 
 
-const ctx = new window.AudioContext || new window.webkitAudioContext;
-let functionCaller = "sendNotesToPlay(1, 'ns1', 'cvs1', 5);";
-let cvs1 = document.getElementById("cvs1");
+var ctx = new window.AudioContext || new window.webkitAudioContext;
+var functionCaller = "sendNotesToPlay(1, 'ns1', 'cvs1', 5);";
+var cvs1 = document.getElementById("cvs1");
 cvs1.width = window.innerWidth;
 
 
@@ -144,8 +144,8 @@ function whichOctave(num) {
 
 //determines song tempo
 function tempo() {
-    let bpm = document.getElementById("tempo").value;
-    let tempo = 60 / bpm * .5;
+    var bpm = document.getElementById("tempo").value;
+    var tempo = 60 / bpm * .5;
     return tempo;
 }
 
@@ -153,9 +153,9 @@ function tempo() {
 
 //main sound generating function.  Receives attributes and creates appropriate note
 function play(hertz, sustain, octave) {
-    const osc = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    const sustainF = sustain * tempo();
+    var osc = ctx.createOscillator();
+    var gainNode = ctx.createGain();
+    var sustainF = sustain * tempo();
     
     osc.type = document.getElementById('wav-type').value;     
     osc.connect(gainNode);
@@ -176,17 +176,17 @@ function addPart(index) {
     
     
     //create input and props
-    let div = document.createElement('div');
+    var div = document.createElement('div');
     div.className = 'instrument-div';
 
-    let input = document.createElement('input');
+    var input = document.createElement('input');
     input.placeholder = `Instrument ${index}: enter notes to play`;
     input.id = `ns${index}`;
     input.type = 'text';
     input.className = 'input';
     
     //create canvas and props
-    let canvas = document.createElement('canvas');
+    var canvas = document.createElement('canvas');
     canvas.height = '75';
     canvas.width = window.innerWidth;
     canvas.id = `cvs${index}`;
@@ -206,11 +206,11 @@ function addPart(index) {
 //Sets up the canvas and draws the notes for each instrument.
 function noteDrawer(hertz, sustain, octave, id, pos) {
 
-    const cvs = document.getElementById(`${id}`).getContext("2d");
+    var cvs = document.getElementById(`${id}`).getContext("2d");
 
-    let blockLength = sustain * 10;
-    let blockX = pos;
-    let blockY = 70 - ((hertz / 10) * (octave * .5));
+    var blockLength = sustain * 10;
+    var blockX = pos;
+    var blockY = 70 - ((hertz / 10) * (octave * .5));
 
     cvs.fillStyle = randomColor();
     cvs.shadowOffsetX = 2;
