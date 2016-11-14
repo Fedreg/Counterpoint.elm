@@ -5,7 +5,7 @@
 //if the add additional instrument button is pressed, a new input and corresponding canvas is added to the DOM.
 
 
-const ctx = new window.AudioContext //|| new window.webkitAudioContext;
+const ctx = new window.AudioContext || new window.webkitAudioContext;
 let functionCaller = "sendNotesToPlay(1, 'ns1', 'cvs1', 5);";
 let cvs1 = document.getElementById("cvs1");
 cvs1.width = window.innerWidth;
