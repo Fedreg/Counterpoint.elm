@@ -3,9 +3,8 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import String exposing (..)
-import Array exposing (..)
 import Regex exposing (..)
+import List.Extra exposing (getAt)
 
 
 main =
@@ -54,7 +53,15 @@ parseNotes : String -> List (List String)
 parseNotes string =
     find All (regex "([a-g,r]+#|[a-g,r])([whqes])(\\d)") string
         |> List.map .match
-        |> List.map (String.toList >> List.map String.fromChar)
+        |> if List.map String.length == 4 then
+            List.map (String.toList >> List.map String.fromChar >> getAt 1 ++ getAt 2)
+           else
+            List.map (String.toList >> List.map String.fromChar)
+
+
+
+--sharpAdder : List ( List String) -> List ( List String)
+--sharpAdder notes =
 
 
 sustain : String -> Float
@@ -136,49 +143,6 @@ frequencies note =
 
 
 
-{--
-finalArr item =
-    if List.length item == 3 then
-
-        List.map (first ++ third  ++ fourth ++ ) item
-
-    else
-        List.map (firstTwo  ++ third  ++ fourth ++ ) item
-
-
-first a =
-    List.map (String.left 1) a
-
-
-firstTwo a =
-    List.map (String.left 2) a
-
-
-third a =
-    List.map (String.slice 2 3) a
-
-
-fourth a =
-    List.map (String.right 1) a
-
-
-
-frequencies =
-    { c = 130.81
-    , c# = 139.00
-    , d = 146.83
-    , d# = 156.00
-    , e = 164.81
-    , f = 174.61
-    , f# = 185.00
-    , g = 196.00
-    , g# = 208.00
-    , a = 220.00
-    , a# = 233.00
-    , b = 246.94
-    , r = 0.0
- }
--}
 -- VIEW
 
 
