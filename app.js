@@ -216,9 +216,9 @@ function noteDrawer(hertz, sustain, octave, id, pos) {
     cvs.shadowOffsetX = 2;
     cvs.shadowOffsetY = 2;
     cvs.shadowBlur = 5;
-    cvs.shadowColor = "rgba(0, 0, 0, 0.5)";
+    cvs.shadowColor = "rgba(0, 0, 0, 0.25)";
     cvs.beginPath();
-    cvs.rect(blockX, blockY, blockLength, 20); 
+    cvs.rect(blockX, blockY, blockLength, 5); 
     cvs.closePath();
     cvs.fill();
 
