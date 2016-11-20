@@ -4,7 +4,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Regex exposing (..)
-import List.Extra exposing (getAt)
+import String exposing (..)
 
 
 main =
@@ -31,6 +31,13 @@ model =
     }
 
 
+type alias Note =
+    { noteName : String
+    , noteDuration : String
+    , octave : Float
+    }
+
+
 
 --UPDATE
 
@@ -49,14 +56,25 @@ update msg model =
             { model | notesToBeParsed = model.initialNotes }
 
 
-parseNotes : String -> List (List String)
+parseNotes : String -> List Note
 parseNotes string =
-    find All (regex "([a-g,r]+#|[a-g,r])([whqes])(\\d)") string
+    String.toLower string
+        |> find All (regex "([a-g,r]+#|[a-g,r])([whqes])(\\d)")
         |> List.map .match
-        |> if List.map String.length == 4 then
-            List.map (String.toList >> List.map String.fromChar >> getAt 1 ++ getAt 2)
-           else
-            List.map (String.toList >> List.map String.fromChar)
+        |> List.map noteSorter
+
+
+noteSorter : String -> Note
+noteSorter string =
+    case (String.length string) of
+        3 ->
+            Note (String.slice 0 1 string) (String.slice 1 2 string) (Result.withDefault 0 <| String.toFloat <| String.slice 2 3 string)
+
+        4 ->
+            Note (String.slice 0 2 string) (String.slice 2 3 string) (Result.withDefault 0 <| String.toFloat <| String.slice 3 4 string)
+
+        _ ->
+            Note "a" "s" 0.0
 
 
 
