@@ -217,11 +217,6 @@ function noteDrawer(hertz, sustain, octave, id, pos) {
     cvs.rect(blockX, blockY, blockLength, 5); 
     cvs.closePath();
     cvs.fill();
-
-    if (blockX >= cvs1.width) {
-        blockX -= cvs1.width;
-        blockY += 100;
-    }
 }
 
 function clearCanvas() {
