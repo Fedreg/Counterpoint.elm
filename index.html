@@ -7,10 +7,12 @@
 <div id="wrapper">
     <h1 >COUNTERPOINT.JS</h1>
     <div id="input-div">
-        <input class="input" type="text"  placeholder="Instrument 1: enter notes to play" id="ns1"> 
-    </div>
+        <div class="instrument-div">
+            <canvas id="cvs1" height="75" width=window.innerWidth class="canvas" ></canvas> 
+            <input class="input" type="text"  placeholder="Instrument 1: enter notes to play" id="ns1"> </div>
+        </div>
     <div class="button-div">
-        <button class="button" id="play-button" onclick="clearCanvas(); sendNotesToPlay(1, 'ns1', 5);">Push Play</button>
+        <button class="button" id="play-button" onclick="sendNotesToPlay(1, 'ns1', 'cvs1', 5);">Push Play</button>
         <button class="button" id="instrument-button" onclick="addPart(1)">Add Instrument</button>
         <input class="button"  id="tempo" placeholder="enter a tempo" value="120">
         <select class="button" id="wav-type">
@@ -20,7 +22,6 @@
             <option selected="sawtooth" value="sawtooth">sawtooth</option>
         </select>
     </div>
-    <canvas id="cvs1" height="750" width=window.innerWidth class="canvas" ></canvas> 
     <ul>
         <li>Enter notes as "cw4"</li>
         <li>where "c" equals the note from a-g; #s work but no bs (that's flats, not BS)</li>
@@ -83,18 +84,33 @@
             transition: 1s ease-out;
         }
 
+        .instrument-div {
+            width: 96%;
+            height: 125px;
+            background-color: #fff;
+            border: 0.5px solid #009688;
+            padding: 5px;
+            margin: 10px;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+                -ms-flex-direction: column;
+                    flex-direction: column;
+            -webkit-box-pack: center;
+                -ms-flex-pack: center;
+                    justify-content: center;
+        }
 
         .input {
-            padding: 8px;
             width: 85%;
-            height: 30px;
+            height: 20px;
             border: none;
             text-alignment: center;
-            font-size: 1.5rem;
-            text-transform: uppercase;
             margin: 0 auto;
             background-color: #fff;
-            color: #777;
+            color: #333;
         }
 
         .button-div {
