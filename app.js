@@ -5,7 +5,7 @@
 //if the add additional instrument button is pressed, a new input and corresponding canvas is added to the DOM.
 
 
-var ctx = new ( window.webkitAudioContext  )|| ( window.AudioContext );
+var ctx = new window.webkitAudioContext || window.AudioContext;
 var functionCaller = "clearCanvas(); sendNotesToPlay(1, 'ns1', 5);";
 var cvs1 = document.getElementById("cvs1");
 cvs1.width = window.innerWidth;
@@ -48,6 +48,8 @@ function sendNotesToPlay(index, id, blockX) {
 
 
 //gets input string and formats it into array of arrays to send to sendNotesToPlay function
+// expected input ex: 'co1d#s4fw2', etc
+// expected output [[c,o,1],[d#,s,4],[f,w,2]], etc
 function stringParser(id) {
     var noteString = document.getElementById(id).value.toLowerCase();  
     
@@ -55,53 +57,52 @@ function stringParser(id) {
         var noteArr =  noteString.match(/([a-g,r]+#|[a-g,r])([whqes])(\d)/g); 
         var finalArr = noteArr.map(makeArrInArr);
       
-        function makeArrInArr(item) {
-            if (item.length === 4) {
-                var arr = [];
-                
-                arr.push(item.slice(0,2));
-                arr.push(item.slice(2,3));
-                arr.push(item.slice(3,4));
-                return arr;
-            } 
-          
-            if (item.length === 3) {
-                 var arr = [];
-                 
-                arr.push(item.slice(0,1));
-                arr.push(item.slice(1,2));
-                arr.push(item.slice(2,3));
-                return arr;
-            }
-        }
-        
         return finalArr;
     }
-      // expected input ex: 'co1d#s4fw2', etc
-      // expected output [[c,o,1],[d#,s,4],[f,w,2]], etc
+}
+
+
+function makeArrInArr(item) {
+    if (item.length === 4) {
+        var arr = [];
+        
+        arr.push(item.slice(0,2));
+        arr.push(item.slice(2,3));
+        arr.push(item.slice(3,4));
+        return arr;
+    } 
+  
+    if (item.length === 3) {
+         var arr = [];
+         
+        arr.push(item.slice(0,1));
+        arr.push(item.slice(1,2));
+        arr.push(item.slice(2,3));
+        return arr;
+    }
 }
 
 
 
 //dertermines note duration
-function noteDuration(char) {
-    var duration = char;
+function noteDuration(item) {
+    var duration = item;
     var sustain;      
 
     if (duration === "w")
-    sustain = 4
+    sustain = 4;
 
     if (duration === "h")
-    sustain = 2
+    sustain = 2;
 
     if (duration === "q")
-    sustain = 1
+    sustain = 1;
 
     if (duration === "e")
-    sustain = .5
+    sustain = 0.5;
 
     if (duration === "s")
-    sustain = .25
+    sustain = 0.25;
 
 return sustain;
 }
@@ -145,7 +146,7 @@ function whichOctave(num) {
 //determines song tempo
 function tempo() {
     var bpm = document.getElementById("tempo").value;
-    var tempo = 60 / bpm * .5;
+    var tempo = 60 / bpm * 0.5;
     return tempo;
 }
 
@@ -161,11 +162,11 @@ function play(hertz, sustain, octave) {
     osc.connect(gainNode);
     gainNode.connect(ctx.destination);
     gainNode.gain.value = 0.0;
-    gainNode.gain.setTargetAtTime(.75, ctx.currentTime, 0.1);
-    gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustainF, 0.01)
+    gainNode.gain.setTargetAtTime(0.75, ctx.currentTime, 0.1);
+    gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustainF, 0.01);
     osc.frequency.value = hertz * octave / 4;
     osc.start();
-    osc.stop(ctx.currentTime + sustainF + .01);
+    osc.stop(ctx.currentTime + sustainF + 0.01);
 }
 
 
@@ -179,7 +180,7 @@ function addPart(index) {
     var div = document.createElement('div');
     div.className = 'instrument-div';
 
-    var color = randomColor({ hue: 'blue', luminosity: 'bright'})
+    var color = randomColor({ hue: 'blue', luminosity: 'bright'});
     var input = document.createElement('input');
     input.placeholder = `Instrument ${index}: enter notes to play`;
     input.id = `ns${index}`;
@@ -188,7 +189,7 @@ function addPart(index) {
     input.setAttribute('style', `color: ${color}`);
 
     //builds up the function that is called when "play" button is pressed.  Each time a new instrument is added, another function call is added.
-    functionCaller += ` sendNotesToPlay(1, 'ns${index}', 5);`
+    functionCaller += ` sendNotesToPlay(1, 'ns${index}', 5);` ; 
 
     div.appendChild(input);
     document.getElementById('input-div').appendChild(div); 
@@ -205,7 +206,7 @@ function noteDrawer(hertz, sustain, octave, id, pos) {
 
     var blockLength = sustain * 10;
     var blockX = pos;
-    var blockY = 200 - ((hertz / 5) * (octave * .5));
+    var blockY = 200 - ((hertz / 5) * (octave * 0.5));
 
     cvs.fillStyle = cvsColor; 
     cvs.shadowOffsetX = 2;
@@ -216,6 +217,11 @@ function noteDrawer(hertz, sustain, octave, id, pos) {
     cvs.rect(blockX, blockY, blockLength, 5); 
     cvs.closePath();
     cvs.fill();
+
+    if (blockX >= cvs1.width) {
+        blockX -= cvs1.width;
+        blockY += 100;
+    }
 }
 
 function clearCanvas() {
