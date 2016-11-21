@@ -2,9 +2,10 @@ module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (..)
+import Html.Events exposing (onClick, onInput)
 import Regex exposing (..)
-import String exposing (..)
+import String
+import List.Extra exposing (getAt)
 
 
 main =
@@ -161,27 +162,29 @@ frequencies note =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ input
+    div [ style [ ( "textAlign", "center" ) ] ]
+        [ h1 [ style [ ( "textDecoration", "underline" ) ] ] [ text "COUNTERPOINT.ELM" ]
+        , input
             [ type_ "text"
             , placeholder "Enter notes to play"
             , value model.initialNotes
             , onInput AcceptNotes
             , style
-                [ ( "margin", " 1rem auto" )
-                , ( "width", "90%" )
+                [ ( "margin", " 3rem 20px" )
+                , ( "width", "80%" )
                 , ( "textTransform", "uppercase" )
                 ]
             ]
             []
         , button [ onClick PrepareNotes ] [ text "Play Notes" ]
-        , div [] [ text (toString (parseNotes model.initialNotes)) ]
+        , div [] [ text "NOTES TO BE PLAYED" ]
+        , div [ style [ ( "color", "red" ), ( "fontSize", "0.75 rem" ) ] ] [ text (toString (parseNotes model.initialNotes)) ]
         , div [ style [ ( "margin", "1rem auto" ) ] ] [ instructions ]
         ]
 
 
 instructions =
-    ul []
+    ul [ style [ ( "listStyle", "none" ) ] ]
         [ li [] [ text "Enter notes in the format: CW3 where ..." ]
         , li [] [ text "C is the name of the note to be played (sharps are allowed but no flats yet)" ]
         , li [] [ text "W is the note duration, where W = whole, H = eigth, Q = quarter, E = eigth, & S = sixteenth" ]
