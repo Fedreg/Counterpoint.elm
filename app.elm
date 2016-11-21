@@ -21,13 +21,7 @@ main =
 
 type alias Model =
     { initialNotes : String
-    , notesToBeParsed : String
-    }
-
-
-model =
-    { initialNotes = ""
-    , notesToBeParsed = ""
+    , notesToSend : List Note
     }
 
 
@@ -35,6 +29,12 @@ type alias Note =
     { noteName : String
     , noteDuration : String
     , octave : Float
+    }
+
+
+model =
+    { initialNotes = ""
+    , notesToSend = []
     }
 
 
@@ -53,7 +53,7 @@ update msg model =
             { model | initialNotes = text }
 
         PrepareNotes ->
-            { model | notesToBeParsed = model.initialNotes }
+            { model | notesToSend = parseNotes model.initialNotes }
 
 
 parseNotes : String -> List Note
@@ -74,12 +74,7 @@ noteSorter string =
             Note (String.slice 0 2 string) (String.slice 2 3 string) (Result.withDefault 0 <| String.toFloat <| String.slice 3 4 string)
 
         _ ->
-            Note "a" "s" 0.0
-
-
-
---sharpAdder : List ( List String) -> List ( List String)
---sharpAdder notes =
+            Note "x" "x" 0.0
 
 
 sustain : String -> Float
@@ -172,9 +167,23 @@ view model =
             , placeholder "Enter notes to play"
             , value model.initialNotes
             , onInput AcceptNotes
+            , style
+                [ ( "margin", " 1rem auto" )
+                , ( "width", "90%" )
+                , ( "textTransform", "uppercase" )
+                ]
             ]
             []
         , button [ onClick PrepareNotes ] [ text "Play Notes" ]
-        , div [] [ text (toString (parseNotes model.notesToBeParsed)) ]
-          --, div [] [ text (toString (finalArr parseNotes)) ]
+        , div [] [ text (toString (parseNotes model.initialNotes)) ]
+        , div [ style [ ( "margin", "1rem auto" ) ] ] [ instructions ]
+        ]
+
+
+instructions =
+    ul []
+        [ li [] [ text "Enter notes in the format: CW3 where ..." ]
+        , li [] [ text "C is the name of the note to be played (sharps are allowed but no flats yet)" ]
+        , li [] [ text "W is the note duration, where W = whole, H = eigth, Q = quarter, E = eigth, & S = sixteenth" ]
+        , li [] [ text "3 equals octave to be played (range of 1 - 9)" ]
         ]
