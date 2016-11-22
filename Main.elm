@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -6,6 +6,15 @@ import Html.Events exposing (onClick, onInput)
 import Regex exposing (..)
 import String
 import List.Extra exposing (getAt)
+
+
+--PORTS
+
+
+port send : List NOte -> Cmd msg
+
+
+port resend : String -> Sub msg
 
 
 main =
@@ -45,7 +54,7 @@ model =
 
 type Msg
     = AcceptNotes String
-    | PrepareNotes
+    | SendNotes
 
 
 update msg model =
@@ -53,7 +62,7 @@ update msg model =
         AcceptNotes text ->
             { model | initialNotes = text }
 
-        PrepareNotes ->
+        SendNotes ->
             { model | notesToSend = parseNotes model.initialNotes }
 
 
@@ -69,10 +78,10 @@ noteSorter : String -> Note
 noteSorter string =
     case (String.length string) of
         3 ->
-            Note (String.slice 0 1 string) (String.slice 1 2 string) (Result.withDefault 0 <| String.toFloat <| String.slice 2 3 string)
+            Note (String.slice 0 1 string) (String.slice 1 2 string) (Result.withDefault 0 (String.toFloat (String.slice 2 3 string)))
 
         4 ->
-            Note (String.slice 0 2 string) (String.slice 2 3 string) (Result.withDefault 0 <| String.toFloat <| String.slice 3 4 string)
+            Note (String.slice 0 2 string) (String.slice 2 3 string) (Result.withDefault 0 (String.toFloat (String.slice 3 4 string)))
 
         _ ->
             Note "x" "x" 0.0
@@ -176,7 +185,7 @@ view model =
                 ]
             ]
             []
-        , button [ onClick PrepareNotes ] [ text "Play Notes" ]
+        , button [ onClick SendNotes ] [ text "Play Notes" ]
         , div [] [ text "NOTES TO BE PLAYED" ]
         , div [ style [ ( "color", "red" ), ( "fontSize", "0.75 rem" ) ] ] [ text (toString (parseNotes model.initialNotes)) ]
         , div [ style [ ( "margin", "1rem auto" ) ] ] [ instructions ]
