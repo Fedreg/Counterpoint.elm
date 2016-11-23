@@ -6,6 +6,7 @@ import Html.Events exposing (onClick, onInput)
 import Regex exposing (..)
 import String exposing (..)
 import List.Extra exposing (getAt)
+import Platform.Sub exposing (..)
 
 
 --PORTS
@@ -14,12 +15,13 @@ import List.Extra exposing (getAt)
 port send : List Note -> Cmd msg
 
 
-port resend : (String -> msg) -> Sub msg
+
+--port resend : (String -> msg) -> Sub msg
 
 
 main =
-    Platform.program
-        { init = model
+    Html.program
+        { init = init
         , update = update
         , view = view
         , subscriptions = subscriptions
@@ -49,6 +51,10 @@ model =
     }
 
 
+init =
+    ( model, Cmd.none )
+
+
 
 --UPDATE
 
@@ -61,10 +67,14 @@ type Msg
 update msg model =
     case msg of
         AcceptNotes text ->
-            { model | initialNotes = text }
+            ( { model | initialNotes = text }, Cmd.none )
 
         SendNotes ->
-            { model | notesToSend = parseNotes model.initialNotes }
+            ( { model | notesToSend = parseNotes model.initialNotes }, send model.notesToSend )
+
+
+subscriptions model =
+    Sub.none
 
 
 parseNotes : String -> List Note

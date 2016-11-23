@@ -9819,7 +9819,7 @@ var _user$project$Main$octave = function (num) {
 	if (_p1 === 1) {
 		return 1;
 	} else {
-		return 2 * (num - 1);
+		return Math.pow(2, num - 1);
 	}
 };
 var _user$project$Main$sustain = function (duration) {
@@ -9839,17 +9839,29 @@ var _user$project$Main$sustain = function (duration) {
 			return 0.0;
 	}
 };
+var _user$project$Main$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};
 var _user$project$Main$model = {
 	initialNotes: '',
 	notesToSend: {ctor: '[]'}
 };
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$model, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Main$send = _elm_lang$core$Native_Platform.outgoingPort(
+	'send',
+	function (v) {
+		return _elm_lang$core$Native_List.toArray(v).map(
+			function (v) {
+				return {hz: v.hz, noteDuration: v.noteDuration, octave: v.octave};
+			});
+	});
 var _user$project$Main$Model = F2(
 	function (a, b) {
 		return {initialNotes: a, notesToSend: b};
 	});
 var _user$project$Main$Note = F3(
 	function (a, b, c) {
-		return {noteName: a, noteDuration: b, octave: c};
+		return {hz: a, noteDuration: b, octave: c};
 	});
 var _user$project$Main$noteSorter = function (string) {
 	var _p3 = _elm_lang$core$String$length(string);
@@ -9857,25 +9869,31 @@ var _user$project$Main$noteSorter = function (string) {
 		case 3:
 			return A3(
 				_user$project$Main$Note,
-				A3(_elm_lang$core$String$slice, 0, 1, string),
-				A3(_elm_lang$core$String$slice, 1, 2, string),
-				A2(
-					_elm_lang$core$Result$withDefault,
-					0,
-					_elm_lang$core$String$toFloat(
-						A3(_elm_lang$core$String$slice, 2, 3, string))));
+				_user$project$Main$frequencies(
+					A3(_elm_lang$core$String$slice, 0, 1, string)),
+				_user$project$Main$sustain(
+					A3(_elm_lang$core$String$slice, 1, 2, string)),
+				_user$project$Main$octave(
+					A2(
+						_elm_lang$core$Result$withDefault,
+						0,
+						_elm_lang$core$String$toInt(
+							A3(_elm_lang$core$String$slice, 2, 3, string)))));
 		case 4:
 			return A3(
 				_user$project$Main$Note,
-				A3(_elm_lang$core$String$slice, 0, 2, string),
-				A3(_elm_lang$core$String$slice, 2, 3, string),
-				A2(
-					_elm_lang$core$Result$withDefault,
-					0,
-					_elm_lang$core$String$toFloat(
-						A3(_elm_lang$core$String$slice, 3, 4, string))));
+				_user$project$Main$frequencies(
+					A3(_elm_lang$core$String$slice, 0, 2, string)),
+				_user$project$Main$sustain(
+					A3(_elm_lang$core$String$slice, 2, 3, string)),
+				_user$project$Main$octave(
+					A2(
+						_elm_lang$core$Result$withDefault,
+						0,
+						_elm_lang$core$String$toInt(
+							A3(_elm_lang$core$String$slice, 3, 4, string)))));
 		default:
-			return A3(_user$project$Main$Note, 'x', 'x', 0.0);
+			return A3(_user$project$Main$Note, 0.0, 0.0, 0);
 	}
 };
 var _user$project$Main$parseNotes = function (string) {
@@ -9897,15 +9915,23 @@ var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p4 = msg;
 		if (_p4.ctor === 'AcceptNotes') {
-			return _elm_lang$core$Native_Utils.update(
-				model,
-				{initialNotes: _p4._0});
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{initialNotes: _p4._0}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
 		} else {
-			return _elm_lang$core$Native_Utils.update(
-				model,
-				{
-					notesToSend: _user$project$Main$parseNotes(model.initialNotes)
-				});
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						notesToSend: _user$project$Main$parseNotes(model.initialNotes)
+					}),
+				_1: _user$project$Main$send(model.notesToSend)
+			};
 		}
 	});
 var _user$project$Main$SendNotes = {ctor: 'SendNotes'};
@@ -10059,8 +10085,8 @@ var _user$project$Main$view = function (model) {
 			}
 		});
 };
-var _user$project$Main$main = _elm_lang$html$Html$beginnerProgram(
-	{model: _user$project$Main$model, update: _user$project$Main$update, view: _user$project$Main$view})();
+var _user$project$Main$main = _elm_lang$html$Html$program(
+	{init: _user$project$Main$init, update: _user$project$Main$update, view: _user$project$Main$view, subscriptions: _user$project$Main$subscriptions})();
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
