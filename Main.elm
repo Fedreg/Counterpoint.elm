@@ -4,24 +4,25 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
 import Regex exposing (..)
-import String
+import String exposing (..)
 import List.Extra exposing (getAt)
 
 
 --PORTS
 
 
-port send : List NOte -> Cmd msg
+port send : List Note -> Cmd msg
 
 
-port resend : String -> Sub msg
+port resend : (String -> msg) -> Sub msg
 
 
 main =
-    beginnerProgram
-        { model = model
+    Platform.program
+        { init = model
         , update = update
         , view = view
+        , subscriptions = subscriptions
         }
 
 
@@ -36,9 +37,9 @@ type alias Model =
 
 
 type alias Note =
-    { noteName : String
-    , noteDuration : String
-    , octave : Float
+    { hz : Float
+    , noteDuration : Float
+    , octave : Int
     }
 
 
@@ -68,7 +69,7 @@ update msg model =
 
 parseNotes : String -> List Note
 parseNotes string =
-    String.toLower string
+    toLower string
         |> find All (regex "([a-g,r]+#|[a-g,r])([whqes])(\\d)")
         |> List.map .match
         |> List.map noteSorter
@@ -76,15 +77,15 @@ parseNotes string =
 
 noteSorter : String -> Note
 noteSorter string =
-    case (String.length string) of
+    case (length string) of
         3 ->
-            Note (String.slice 0 1 string) (String.slice 1 2 string) (Result.withDefault 0 (String.toFloat (String.slice 2 3 string)))
+            Note (frequencies (slice 0 1 string)) (sustain (slice 1 2 string)) (octave (Result.withDefault 0 (toInt (slice 2 3 string))))
 
         4 ->
-            Note (String.slice 0 2 string) (String.slice 2 3 string) (Result.withDefault 0 (String.toFloat (String.slice 3 4 string)))
+            Note (frequencies (slice 0 2 string)) (sustain (slice 2 3 string)) (octave (Result.withDefault 0 (toInt (slice 3 4 string))))
 
         _ ->
-            Note "x" "x" 0.0
+            Note 0.0 0.0 0
 
 
 sustain : String -> Float
@@ -116,7 +117,7 @@ octave num =
             1
 
         _ ->
-            2 * (num - 1)
+            2 ^ (num - 1)
 
 
 frequencies : String -> Float

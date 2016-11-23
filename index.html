@@ -12,7 +12,22 @@
                 var nextNoteRequest = play(note);
                 app.ports.resend.send(nextNoteRequest);
 
-            function play (note) {
+            function play(hertz, sustain, octave) {
+                var osc = ctx.createOscillator();
+                var gainNode = ctx.createGain();
+                var sustainF = sustain; //* tempo();
+
+                osc.type = document.getElementById('wav-type').value;     
+                osc.connect(gainNode);
+                gainNode.connect(ctx.destination);
+                gainNode.gain.value = 0.0;
+                gainNode.gain.setTargetAtTime(0.75, ctx.currentTime, 0.1);
+                gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustainF, 0.01);
+                osc.frequency.value = hertz * octave / 4;
+                osc.start();
+                osc.stop(ctx.currentTime + sustainF + 0.01);
+            }
+                
                 //take function from JS branch
                 //add a setTimeout to send a return message requesting the next note on tempo sent via elm Flag
             }
