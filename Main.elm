@@ -6,17 +6,6 @@ import Html.Events exposing (onClick, onInput)
 import Regex exposing (..)
 import String exposing (..)
 import List.Extra exposing (getAt)
-import Platform.Sub exposing (..)
-
-
---PORTS
-
-
-port send : List Note -> Cmd msg
-
-
-
---port resend : (String -> msg) -> Sub msg
 
 
 main =
@@ -35,12 +24,13 @@ main =
 type alias Model =
     { initialNotes : String
     , notesToSend : List Note
+    , index : Int
     }
 
 
 type alias Note =
     { hz : Float
-    , noteDuration : Float
+    , duration : Float
     , octave : Int
     }
 
@@ -48,6 +38,7 @@ type alias Note =
 model =
     { initialNotes = ""
     , notesToSend = []
+    , index = 0
     }
 
 
@@ -59,6 +50,9 @@ init =
 --UPDATE
 
 
+port send : List Note -> Cmd msg
+
+
 type Msg
     = AcceptNotes String
     | SendNotes
@@ -67,14 +61,19 @@ type Msg
 update msg model =
     case msg of
         AcceptNotes text ->
-            ( { model | initialNotes = text }, Cmd.none )
+            ( { model
+                | initialNotes = text
+                , notesToSend = parseNotes model.initialNotes
+              }
+            , Cmd.none
+            )
 
         SendNotes ->
-            ( { model | notesToSend = parseNotes model.initialNotes }, send model.notesToSend )
+            ( model, send model.notesToSend )
 
 
-subscriptions model =
-    Sub.none
+subscriptions =
+    always Sub.none
 
 
 parseNotes : String -> List Note
@@ -198,7 +197,7 @@ view model =
             []
         , button [ onClick SendNotes ] [ text "Play Notes" ]
         , div [] [ text "NOTES TO BE PLAYED" ]
-        , div [ style [ ( "color", "red" ), ( "fontSize", "0.75 rem" ) ] ] [ text (toString (parseNotes model.initialNotes)) ]
+        , div [ style [ ( "color", "red" ), ( "fontSize", "0.75 rem" ) ] ] [ text (toString model.notesToSend) ]
         , div [ style [ ( "margin", "1rem auto" ) ] ] [ instructions ]
         ]
 

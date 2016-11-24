@@ -9839,12 +9839,11 @@ var _user$project$Main$sustain = function (duration) {
 			return 0.0;
 	}
 };
-var _user$project$Main$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$none;
-};
+var _user$project$Main$subscriptions = _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none);
 var _user$project$Main$model = {
 	initialNotes: '',
-	notesToSend: {ctor: '[]'}
+	notesToSend: {ctor: '[]'},
+	index: 0
 };
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$model, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$send = _elm_lang$core$Native_Platform.outgoingPort(
@@ -9852,16 +9851,16 @@ var _user$project$Main$send = _elm_lang$core$Native_Platform.outgoingPort(
 	function (v) {
 		return _elm_lang$core$Native_List.toArray(v).map(
 			function (v) {
-				return {hz: v.hz, noteDuration: v.noteDuration, octave: v.octave};
+				return {hz: v.hz, duration: v.duration, octave: v.octave};
 			});
 	});
-var _user$project$Main$Model = F2(
-	function (a, b) {
-		return {initialNotes: a, notesToSend: b};
+var _user$project$Main$Model = F3(
+	function (a, b, c) {
+		return {initialNotes: a, notesToSend: b, index: c};
 	});
 var _user$project$Main$Note = F3(
 	function (a, b, c) {
-		return {hz: a, noteDuration: b, octave: c};
+		return {hz: a, duration: b, octave: c};
 	});
 var _user$project$Main$noteSorter = function (string) {
 	var _p3 = _elm_lang$core$String$length(string);
@@ -9919,17 +9918,16 @@ var _user$project$Main$update = F2(
 				ctor: '_Tuple2',
 				_0: _elm_lang$core$Native_Utils.update(
 					model,
-					{initialNotes: _p4._0}),
+					{
+						initialNotes: _p4._0,
+						notesToSend: _user$project$Main$parseNotes(model.initialNotes)
+					}),
 				_1: _elm_lang$core$Platform_Cmd$none
 			};
 		} else {
 			return {
 				ctor: '_Tuple2',
-				_0: _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						notesToSend: _user$project$Main$parseNotes(model.initialNotes)
-					}),
+				_0: model,
 				_1: _user$project$Main$send(model.notesToSend)
 			};
 		}
@@ -10054,8 +10052,7 @@ var _user$project$Main$view = function (model) {
 								{
 									ctor: '::',
 									_0: _elm_lang$html$Html$text(
-										_elm_lang$core$Basics$toString(
-											_user$project$Main$parseNotes(model.initialNotes))),
+										_elm_lang$core$Basics$toString(model.notesToSend)),
 									_1: {ctor: '[]'}
 								}),
 							_1: {

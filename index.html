@@ -10,28 +10,30 @@
         <script>
             var app = Elm.Main.fullscreen();
 
-            app.ports.send.subscribe(function(note) {
-                var nextNoteRequest = play(note);
-                console.log(note);
-                app.ports.resend.send(nextNoteRequest);
-            });
+            app.ports.send.subscribe(play);
 
             var ctx = new window.webkitAudioContext || window.AudioContext;
-
-                function play(hertz, sustain, octave) {
+            var i = 0;
+            
+            function play(note) {
+                console.log(note);
                     var osc = ctx.createOscillator();
                     var gainNode = ctx.createGain();
-                    var sustainF = sustain; 
+                    var hz = note[i].hz
+                    var sustain = note[i].duration; 
+                    var octave = note[i].octave
 
                     osc.connect(gainNode);
                     gainNode.connect(ctx.destination);
                     gainNode.gain.value = 0.0;
                     gainNode.gain.setTargetAtTime(0.75, ctx.currentTime, 0.1);
-                    gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustainF, 0.01);
-                    osc.frequency.value = hertz * octave / 4;
+                    gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustain, 0.01);
+                    osc.frequency.value = hz * octave / 4;
                     osc.start();
-                    osc.stop(ctx.currentTime + sustainF + 0.01);
-                }
+                    osc.stop(ctx.currentTime + sustain + 0.01);
+                    console.log(i ,hz,sustain, octave);
+                    i++;
+            }
         </script>
     </body>
     
