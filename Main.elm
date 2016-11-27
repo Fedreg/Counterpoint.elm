@@ -6,7 +6,6 @@ import Html.Events exposing (onClick, onInput)
 import Regex exposing (..)
 import String exposing (..)
 import List.Extra exposing (getAt)
-import Time exposing (..)
 
 
 main =
@@ -27,6 +26,8 @@ type alias Model =
     , notesToSend : List Note
     , index : Int
     , bpm : Int
+    , waveType : String
+    , numberOfInputs : Int
     }
 
 
@@ -39,7 +40,8 @@ type alias Note =
 
 type alias PlayBundle =
     { noteList : List Note
-    , bpm : Int
+    , tempo : Float
+    , waveType : String
     }
 
 
@@ -47,7 +49,9 @@ model =
     { initialNotes = ""
     , notesToSend = []
     , index = 0
-    , bpm = 128
+    , bpm = 80
+    , waveType = "square"
+    , numberOfInputs = 1
     }
 
 
@@ -65,6 +69,8 @@ port send : PlayBundle -> Cmd msg
 type Msg
     = AcceptNotes String
     | SendNotes
+    | ChangeBPM String
+    | ChangeWaveType String
 
 
 update msg model =
@@ -78,7 +84,13 @@ update msg model =
             )
 
         SendNotes ->
-            ( model, send (PlayBundle model.notesToSend model.bpm) )
+            ( model, send (PlayBundle model.notesToSend (tempo model.bpm) model.waveType) )
+
+        ChangeBPM text ->
+            ( { model | bpm = Result.withDefault 128 (String.toInt text) }, Cmd.none )
+
+        ChangeWaveType text ->
+            ( { model | waveType = text }, Cmd.none )
 
 
 subscriptions =
@@ -184,6 +196,11 @@ frequencies note =
             0.0
 
 
+tempo : Int -> Float
+tempo bpm =
+    (Basics.toFloat 60 / Basics.toFloat bpm) * 0.5
+
+
 
 -- VIEW
 
@@ -205,6 +222,32 @@ view model =
             ]
             []
         , button [ onClick SendNotes ] [ text "Play Notes" ]
+        , input
+            [ type_ "number"
+            , placeholder "BPM"
+            , onInput ChangeBPM
+            , style
+                [ ( "margin", " 1rem 20px" )
+                , ( "width", "15%" )
+                , ( "textTransform", "uppercase" )
+                , ( "display", "inline-block" )
+                ]
+            ]
+            [ text "Beats per minute" ]
+        , select
+            [ onInput ChangeWaveType
+            , style
+                [ ( "margin", " 1rem 20px" )
+                , ( "width", "15%" )
+                , ( "textTransform", "uppercase" )
+                , ( "display", "inline-block" )
+                ]
+            ]
+            [ option [ value "square" ] [ text "square" ]
+            , option [ value "sine" ] [ text "sine" ]
+            , option [ value "triangle" ] [ text "triangle" ]
+            , option [ value "sawtooth" ] [ text "sawtooth" ]
+            ]
         , div [] [ text "NOTES TO BE PLAYED" ]
         , div [ style [ ( "color", "red" ), ( "fontSize", "0.75 rem" ) ] ] [ text (toString model.notesToSend) ]
         , div [ style [ ( "margin", "1rem auto" ) ] ] [ instructions ]
