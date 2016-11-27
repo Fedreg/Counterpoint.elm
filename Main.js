@@ -9976,12 +9976,185 @@ var _user$project$Main$update = F2(
 var _user$project$Main$ChangeWaveType = function (a) {
 	return {ctor: 'ChangeWaveType', _0: a};
 };
+var _user$project$Main$waveSelectMenu = A2(
+	_elm_lang$html$Html$select,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$ChangeWaveType),
+		_1: {
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'margin', _1: ' 1rem 20px'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'width', _1: '15%'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'textTransform', _1: 'uppercase'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		}
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$option,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$value('square'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('square'),
+				_1: {ctor: '[]'}
+			}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$option,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$value('sine'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('sine'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$option,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$value('triangle'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('triangle'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$option,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$value('sawtooth'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('sawtooth'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		}
+	});
 var _user$project$Main$ChangeBPM = function (a) {
 	return {ctor: 'ChangeBPM', _0: a};
 };
+var _user$project$Main$bpmInput = A2(
+	_elm_lang$html$Html$input,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$type_('number'),
+		_1: {
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$placeholder('BPM'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$ChangeBPM),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'margin', _1: ' 1rem 20px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'width', _1: '15%'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'textTransform', _1: 'uppercase'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		}
+	},
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html$text('Beats per minute'),
+		_1: {ctor: '[]'}
+	});
 var _user$project$Main$SendNotes = {ctor: 'SendNotes'};
 var _user$project$Main$AcceptNotes = function (a) {
 	return {ctor: 'AcceptNotes', _0: a};
+};
+var _user$project$Main$noteInputField = function (idName) {
+	return A2(
+		_elm_lang$html$Html$input,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$type_('text'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$id(idName),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$placeholder('Enter notes to play'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$value(_user$project$Main$model.initialNotes),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$AcceptNotes),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'margin', _1: ' 0.5rem 20px'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'width', _1: '80%'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'textTransform', _1: 'uppercase'},
+												_1: {ctor: '[]'}
+											}
+										}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		},
+		{ctor: '[]'});
 };
 var _user$project$Main$view = function (model) {
 	return A2(
@@ -10006,7 +10179,11 @@ var _user$project$Main$view = function (model) {
 						{
 							ctor: '::',
 							_0: {ctor: '_Tuple2', _0: 'textDecoration', _1: 'underline'},
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'marginBottom', _1: '2rem'},
+								_1: {ctor: '[]'}
+							}
 						}),
 					_1: {ctor: '[]'}
 				},
@@ -10017,223 +10194,38 @@ var _user$project$Main$view = function (model) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$input,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$type_('text'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$placeholder('Enter notes to play'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$value(model.initialNotes),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$AcceptNotes),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$style(
-											{
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'margin', _1: ' 3rem 20px'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'width', _1: '80%'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'textTransform', _1: 'uppercase'},
-														_1: {ctor: '[]'}
-													}
-												}
-											}),
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					},
-					{ctor: '[]'}),
+				_0: _user$project$Main$noteInputField('1'),
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$button,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$SendNotes),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Play Notes'),
-							_1: {ctor: '[]'}
-						}),
+					_0: _user$project$Main$noteInputField('2'),
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$input,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$type_('number'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$placeholder('BPM'),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$ChangeBPM),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$style(
-												{
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'margin', _1: ' 1rem 20px'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'width', _1: '15%'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'textTransform', _1: 'uppercase'},
-															_1: {
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
-																_1: {ctor: '[]'}
-															}
-														}
-													}
-												}),
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('Beats per minute'),
-								_1: {ctor: '[]'}
-							}),
+						_0: _user$project$Main$bpmInput,
 						_1: {
 							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$select,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$ChangeWaveType),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$style(
-											{
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'margin', _1: ' 1rem 20px'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'width', _1: '15%'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'textTransform', _1: 'uppercase'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'display', _1: 'inline-block'},
-															_1: {ctor: '[]'}
-														}
-													}
-												}
-											}),
-										_1: {ctor: '[]'}
-									}
-								},
-								{
-									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$option,
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$value('square'),
-											_1: {ctor: '[]'}
-										},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text('square'),
-											_1: {ctor: '[]'}
-										}),
-									_1: {
-										ctor: '::',
-										_0: A2(
-											_elm_lang$html$Html$option,
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$value('sine'),
-												_1: {ctor: '[]'}
-											},
-											{
-												ctor: '::',
-												_0: _elm_lang$html$Html$text('sine'),
-												_1: {ctor: '[]'}
-											}),
-										_1: {
-											ctor: '::',
-											_0: A2(
-												_elm_lang$html$Html$option,
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$value('triangle'),
-													_1: {ctor: '[]'}
-												},
-												{
-													ctor: '::',
-													_0: _elm_lang$html$Html$text('triangle'),
-													_1: {ctor: '[]'}
-												}),
-											_1: {
-												ctor: '::',
-												_0: A2(
-													_elm_lang$html$Html$option,
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html_Attributes$value('sawtooth'),
-														_1: {ctor: '[]'}
-													},
-													{
-														ctor: '::',
-														_0: _elm_lang$html$Html$text('sawtooth'),
-														_1: {ctor: '[]'}
-													}),
-												_1: {ctor: '[]'}
-											}
-										}
-									}
-								}),
+							_0: _user$project$Main$waveSelectMenu,
 							_1: {
 								ctor: '::',
 								_0: A2(
-									_elm_lang$html$Html$div,
-									{ctor: '[]'},
+									_elm_lang$html$Html$button,
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('NOTES TO BE PLAYED'),
+										_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$SendNotes),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Play Notes'),
 										_1: {ctor: '[]'}
 									}),
 								_1: {
 									ctor: '::',
 									_0: A2(
 										_elm_lang$html$Html$div,
+										{ctor: '[]'},
 										{
 											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$style(
-												{
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'color', _1: 'red'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'fontSize', _1: '0.75 rem'},
-														_1: {ctor: '[]'}
-													}
-												}),
-											_1: {ctor: '[]'}
-										},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text(
-												_elm_lang$core$Basics$toString(model.notesToSend)),
+											_0: _elm_lang$html$Html$text('NOTES TO BE PLAYED'),
 											_1: {ctor: '[]'}
 										}),
 									_1: {
@@ -10245,17 +10237,42 @@ var _user$project$Main$view = function (model) {
 												_0: _elm_lang$html$Html_Attributes$style(
 													{
 														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'margin', _1: '1rem auto'},
-														_1: {ctor: '[]'}
+														_0: {ctor: '_Tuple2', _0: 'color', _1: 'red'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'fontSize', _1: '0.75 rem'},
+															_1: {ctor: '[]'}
+														}
 													}),
 												_1: {ctor: '[]'}
 											},
 											{
 												ctor: '::',
-												_0: _user$project$Main$instructions,
+												_0: _elm_lang$html$Html$text(
+													_elm_lang$core$Basics$toString(model.notesToSend)),
 												_1: {ctor: '[]'}
 											}),
-										_1: {ctor: '[]'}
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$div,
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$style(
+														{
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'margin', _1: '1rem auto'},
+															_1: {ctor: '[]'}
+														}),
+													_1: {ctor: '[]'}
+												},
+												{
+													ctor: '::',
+													_0: _user$project$Main$instructions,
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
 									}
 								}
 							}

@@ -208,50 +208,65 @@ tempo bpm =
 view : Model -> Html Msg
 view model =
     div [ style [ ( "textAlign", "center" ) ] ]
-        [ h1 [ style [ ( "textDecoration", "underline" ) ] ] [ text "COUNTERPOINT.ELM" ]
-        , input
-            [ type_ "text"
-            , placeholder "Enter notes to play"
-            , value model.initialNotes
-            , onInput AcceptNotes
-            , style
-                [ ( "margin", " 3rem 20px" )
-                , ( "width", "80%" )
-                , ( "textTransform", "uppercase" )
-                ]
-            ]
-            []
+        [ h1 [ style [ ( "textDecoration", "underline" ), ( "marginBottom", "2rem" ) ] ] [ text "COUNTERPOINT.ELM" ]
+        , noteInputField "1"
+        , noteInputField "2"
+        , bpmInput
+        , waveSelectMenu
         , button [ onClick SendNotes ] [ text "Play Notes" ]
-        , input
-            [ type_ "number"
-            , placeholder "BPM"
-            , onInput ChangeBPM
-            , style
-                [ ( "margin", " 1rem 20px" )
-                , ( "width", "15%" )
-                , ( "textTransform", "uppercase" )
-                , ( "display", "inline-block" )
-                ]
-            ]
-            [ text "Beats per minute" ]
-        , select
-            [ onInput ChangeWaveType
-            , style
-                [ ( "margin", " 1rem 20px" )
-                , ( "width", "15%" )
-                , ( "textTransform", "uppercase" )
-                , ( "display", "inline-block" )
-                ]
-            ]
-            [ option [ value "square" ] [ text "square" ]
-            , option [ value "sine" ] [ text "sine" ]
-            , option [ value "triangle" ] [ text "triangle" ]
-            , option [ value "sawtooth" ] [ text "sawtooth" ]
-            ]
         , div [] [ text "NOTES TO BE PLAYED" ]
         , div [ style [ ( "color", "red" ), ( "fontSize", "0.75 rem" ) ] ] [ text (toString model.notesToSend) ]
         , div [ style [ ( "margin", "1rem auto" ) ] ] [ instructions ]
         ]
+
+
+noteInputField : String -> Html Msg
+noteInputField idName =
+    input
+        [ type_ "text"
+        , id idName
+        , placeholder "Enter notes to play"
+        , value model.initialNotes
+        , onInput AcceptNotes
+        , style
+            [ ( "margin", " 0.5rem 20px" )
+            , ( "width", "80%" )
+            , ( "textTransform", "uppercase" )
+            ]
+        ]
+        []
+
+
+waveSelectMenu =
+    select
+        [ onInput ChangeWaveType
+        , style
+            [ ( "margin", " 1rem 20px" )
+            , ( "width", "15%" )
+            , ( "textTransform", "uppercase" )
+            , ( "display", "inline-block" )
+            ]
+        ]
+        [ option [ value "square" ] [ text "square" ]
+        , option [ value "sine" ] [ text "sine" ]
+        , option [ value "triangle" ] [ text "triangle" ]
+        , option [ value "sawtooth" ] [ text "sawtooth" ]
+        ]
+
+
+bpmInput =
+    input
+        [ type_ "number"
+        , placeholder "BPM"
+        , onInput ChangeBPM
+        , style
+            [ ( "margin", " 1rem 20px" )
+            , ( "width", "15%" )
+            , ( "textTransform", "uppercase" )
+            , ( "display", "inline-block" )
+            ]
+        ]
+        [ text "Beats per minute" ]
 
 
 instructions =
