@@ -6,6 +6,7 @@ import Html.Events exposing (onClick, onInput)
 import Regex exposing (..)
 import String exposing (..)
 import List.Extra exposing (getAt)
+import Time exposing (..)
 
 
 main =
@@ -25,6 +26,7 @@ type alias Model =
     { initialNotes : String
     , notesToSend : List Note
     , index : Int
+    , bpm : Int
     }
 
 
@@ -35,10 +37,17 @@ type alias Note =
     }
 
 
+type alias PlayBundle =
+    { noteList : List Note
+    , bpm : Int
+    }
+
+
 model =
     { initialNotes = ""
     , notesToSend = []
     , index = 0
+    , bpm = 128
     }
 
 
@@ -50,7 +59,7 @@ init =
 --UPDATE
 
 
-port send : List Note -> Cmd msg
+port send : PlayBundle -> Cmd msg
 
 
 type Msg
@@ -69,7 +78,7 @@ update msg model =
             )
 
         SendNotes ->
-            ( model, send model.notesToSend )
+            ( model, send (PlayBundle model.notesToSend model.bpm) )
 
 
 subscriptions =
