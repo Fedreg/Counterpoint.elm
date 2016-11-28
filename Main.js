@@ -10127,28 +10127,24 @@ var _user$project$Main$noteInputField = function (idName) {
 					_0: _elm_lang$html$Html_Attributes$placeholder('Enter notes to play'),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$value(_user$project$Main$model.initialNotes),
+						_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$AcceptNotes),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$AcceptNotes),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$style(
-									{
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'margin', _1: ' 0.5rem 20px'},
+									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'margin', _1: ' 0.5rem 20px'},
+										_0: {ctor: '_Tuple2', _0: 'width', _1: '80%'},
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'width', _1: '80%'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'textTransform', _1: 'uppercase'},
-												_1: {ctor: '[]'}
-											}
+											_0: {ctor: '_Tuple2', _0: 'textTransform', _1: 'uppercase'},
+											_1: {ctor: '[]'}
 										}
-									}),
-								_1: {ctor: '[]'}
-							}
+									}
+								}),
+							_1: {ctor: '[]'}
 						}
 					}
 				}

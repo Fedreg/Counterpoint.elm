@@ -226,7 +226,6 @@ noteInputField idName =
         [ type_ "text"
         , id idName
         , placeholder "Enter notes to play"
-        , value model.initialNotes
         , onInput AcceptNotes
         , style
             [ ( "margin", " 0.5rem 20px" )
