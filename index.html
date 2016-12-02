@@ -13,42 +13,46 @@
             app.ports.send.subscribe(play);
 
             var ctx = new window.webkitAudioContext || window.AudioContext;
-            var i = 0 
+            //var i = 0 
 
            
 
             function play(args) {
-                var note = args.noteList;
-                var tempo = args.tempo;
-                var waveType = args.waveType
-                var hz = note[i].hz
-                var octave = note[i].octave
-                var sustain = note[i].duration; 
-                var sustainFnl = sustain * tempo;
+                //console.log(args);
+                if (args.noteList != null ) {
+                    var note = args.noteList;
+                    var tempo = args.tempo;
+                    var waveType = args.waveType
+                    var hz = note.hz
+                    var octave = note.octave
+                    var sustain = note.duration; 
+                    var sustainFnl = sustain * tempo;
 
-                var osc = ctx.createOscillator();
-                var gainNode = ctx.createGain();
+                    var osc = ctx.createOscillator();
+                    var gainNode = ctx.createGain();
 
-                osc.connect(gainNode);
-                gainNode.connect(ctx.destination);
-                gainNode.gain.value = 0.0;
-                gainNode.gain.setTargetAtTime(0.75, ctx.currentTime, 0.1);
-                gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustainFnl, 0.01);
-                osc.frequency.value = hz * octave / 4;
-                osc.type = waveType;
-                osc.start();
-                osc.stop(ctx.currentTime + sustainFnl + 0.01);
-                console.log(i ,hz, sustain, octave, tempo);
-                i++;
+                    osc.connect(gainNode);
+                    gainNode.connect(ctx.destination);
+                    gainNode.gain.value = 0.0;
+                    gainNode.gain.setTargetAtTime(0.75, ctx.currentTime, 0.1);
+                    gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustainFnl, 0.01);
+                    osc.frequency.value = hz * octave / 4;
+                    osc.type = waveType;
+                    osc.start();
+                    osc.stop(ctx.currentTime + sustainFnl + 0.01);
+                    console.log(hz, sustain, octave, tempo);
+                    //   i++;
 
-                if (note.length > i) {
-                    setTimeout(function() {
-                        play(args);
-                    }, tempo * 1000 * note[i - 1].duration)
+                    /*  if (note.length > i) {
+                        setTimeout(function() {
+                            play(args);
+                        }, tempo * 1000 * note[i - 1].duration)
+                    }
+
+                    if (i === note.length)
+                        i = 0;
+                    */
                 }
-
-                if (i === note.length)
-                    i = 0;
             }
         </script>
     </body>

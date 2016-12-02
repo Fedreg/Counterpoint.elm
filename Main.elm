@@ -6,7 +6,9 @@ import Html.Events exposing (onClick, onInput)
 import Regex exposing (..)
 import String exposing (..)
 import List.Extra exposing (getAt)
-import Time exposing (..)
+import Time exposing (every, millisecond)
+import Task exposing (perform)
+import Process exposing (sleep)
 
 
 main =
@@ -42,7 +44,7 @@ type alias Note =
 
 
 type alias PlayBundle =
-    { noteList : List Note
+    { noteList : Maybe Note
     , tempo : Float
     , waveType : String
     }
@@ -73,9 +75,11 @@ port send : PlayBundle -> Cmd msg
 
 type Msg
     = AcceptNotes String
+    | AcceptNotes2 String
     | SendNotes
     | ChangeBPM String
     | ChangeWaveType String
+    | ResetIndex
 
 
 update msg model =
@@ -88,23 +92,34 @@ update msg model =
             , Cmd.none
             )
 
+        AcceptNotes2 text ->
+            ( { model
+                | initialNotes2 = text
+                , notesToSend2 = parseNotes model.initialNotes2
+              }
+            , Cmd.none
+            )
+
         SendNotes ->
-            ( model
+            ( { model | index = model.index + 1 }
             , Cmd.batch
-                [ send (PlayBundle (getAt model.index model.notesToSend) (tempo model.bpm) model.waveType)
-                , send (PlayBundle (getAt model.index model.notesToSend2) (tempo model.bpm) model.waveType)
+                [ Process.sleep (tempo model.bpm * 1000 * millisecond) |> Task.succeed (send (PlayBundle (getAt model.index model.notesToSend) (tempo model.bpm) model.waveType))
+                , Process.sleep (tempo model.bpm * 1000 * millisecond) |> Task.succeed (send (PlayBundle (getAt model.index model.notesToSend2) (tempo model.bpm) model.waveType))
                 ]
             )
 
         ChangeBPM text ->
-            ( { model | bpm = Result.withDefault 128 (String.toInt text) }, Cmd.none )
+            ( { model | bpm = Result.withDefault 80 (String.toInt text) }, Cmd.none )
 
         ChangeWaveType text ->
             ( { model | waveType = text }, Cmd.none )
 
+        ResetIndex ->
+            (update SendNotes { model | index = 0 })
 
-subscriptions =
-    if model.index > 0 then
+
+subscriptions model =
+    if model.index > 0 && model.index < (String.length model.initialNotes + 1) then
         every ((tempo model.bpm) * 1000 * Time.millisecond) (always SendNotes)
     else
         Sub.none
@@ -223,12 +238,13 @@ view model =
     div [ style [ ( "textAlign", "center" ) ] ]
         [ h1 [ style [ ( "textDecoration", "underline" ), ( "marginBottom", "2rem" ) ] ] [ text "COUNTERPOINT.ELM" ]
         , noteInputField "1"
-        , noteInputField "2"
+        , noteInputField2 "2"
         , bpmInput
         , waveSelectMenu
-        , button [ onClick SendNotes ] [ text "Play Notes" ]
+        , button [ onClick ResetIndex ] [ text "Play Notes" ]
         , div [] [ text "NOTES TO BE PLAYED" ]
         , div [ style [ ( "color", "red" ), ( "fontSize", "0.75 rem" ) ] ] [ text (toString model.notesToSend) ]
+        , div [ style [ ( "color", "lightblue" ), ( "fontSize", "0.75 rem" ) ] ] [ text (toString model.notesToSend2) ]
         , div [ style [ ( "margin", "1rem auto" ) ] ] [ instructions ]
         ]
 
@@ -239,8 +255,23 @@ noteInputField idName =
         [ type_ "text"
         , id idName
         , placeholder "Enter notes to play"
-        , value model.initialNotes
         , onInput AcceptNotes
+        , style
+            [ ( "margin", " 0.5rem 20px" )
+            , ( "width", "80%" )
+            , ( "textTransform", "uppercase" )
+            ]
+        ]
+        []
+
+
+noteInputField2 : String -> Html Msg
+noteInputField2 idName =
+    input
+        [ type_ "text"
+        , id idName
+        , placeholder "Enter notes to play"
+        , onInput AcceptNotes2
         , style
             [ ( "margin", " 0.5rem 20px" )
             , ( "width", "80%" )
