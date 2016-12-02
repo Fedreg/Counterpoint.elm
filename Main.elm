@@ -6,6 +6,7 @@ import Html.Events exposing (onClick, onInput)
 import Regex exposing (..)
 import String exposing (..)
 import List.Extra exposing (getAt)
+import Time exposing (..)
 
 
 main =
@@ -23,7 +24,9 @@ main =
 
 type alias Model =
     { initialNotes : String
+    , initialNotes2 : String
     , notesToSend : List Note
+    , notesToSend2 : List Note
     , index : Int
     , bpm : Int
     , waveType : String
@@ -47,7 +50,9 @@ type alias PlayBundle =
 
 model =
     { initialNotes = ""
+    , initialNotes2 = ""
     , notesToSend = []
+    , notesToSend2 = []
     , index = 0
     , bpm = 80
     , waveType = "square"
@@ -84,7 +89,12 @@ update msg model =
             )
 
         SendNotes ->
-            ( model, send (PlayBundle model.notesToSend (tempo model.bpm) model.waveType) )
+            ( model
+            , Cmd.batch
+                [ send (PlayBundle (getAt model.index model.notesToSend) (tempo model.bpm) model.waveType)
+                , send (PlayBundle (getAt model.index model.notesToSend2) (tempo model.bpm) model.waveType)
+                ]
+            )
 
         ChangeBPM text ->
             ( { model | bpm = Result.withDefault 128 (String.toInt text) }, Cmd.none )
@@ -94,7 +104,10 @@ update msg model =
 
 
 subscriptions =
-    always Sub.none
+    if model.index > 0 then
+        every ((tempo model.bpm) * 1000 * Time.millisecond) (always SendNotes)
+    else
+        Sub.none
 
 
 parseNotes : String -> List Note
