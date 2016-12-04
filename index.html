@@ -10,46 +10,62 @@
         <script>
             var app = Elm.Main.fullscreen();
 
-            app.ports.send.subscribe(play);
+            app.ports.send1.subscribe(noteSender);
+            app.ports.send2.subscribe(noteSender);
+            app.ports.send3.subscribe(noteSender);
+            app.ports.send4.subscribe(noteSender);
 
             var ctx = new window.webkitAudioContext || window.AudioContext;
-            var i = 0 
+            var index = 1;
+            var notesPlayed = 0;
 
-           
+            function noteSender(args) {
+                    console.log("index: " + index);
+                if (args.noteList.length != 0 && index < args.noteList.length) {
+                    var note = args.noteList;
+                    var tempo = args.tempo;
+                    var waveType = args.waveType;
+                    var hz = note[index].hz;
+                    var octave = note[index].octave;
+                    var sustain = note[index].duration; 
 
-            function play(args) {
-                var note = args.noteList;
-                var tempo = args.tempo;
-                var waveType = args.waveType
-                var hz = note[i].hz
-                var octave = note[i].octave
-                var sustain = note[i].duration; 
-                var sustainFnl = sustain * tempo;
+                    if (index === 1){
+                        play (note[0].hz, note[0].octave, note[0].duration, tempo, waveType);
+                    }
 
-                var osc = ctx.createOscillator();
-                var gainNode = ctx.createGain();
+                    if (note.length  > index  ) {
+                        setTimeout(function() {
+                            play(hz, octave, sustain, tempo, waveType);
+                            ++index;
+                            noteSender(args);
+                        }, tempo * 1000 * note[index - 1].duration);
 
-                osc.connect(gainNode);
-                gainNode.connect(ctx.destination);
-                gainNode.gain.value = 0.0;
-                gainNode.gain.setTargetAtTime(0.75, ctx.currentTime, 0.1);
-                gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustainFnl, 0.01);
-                osc.frequency.value = hz * octave / 4;
-                osc.type = waveType;
-                osc.start();
-                osc.stop(ctx.currentTime + sustainFnl + 0.01);
-                console.log(i ,hz, sustain, octave, tempo);
-                i++;
+                    if (index === note.length )
+                        index = 1;
 
-                if (note.length > i) {
-                    setTimeout(function() {
-                        play(args);
-                    }, tempo * 1000 * note[i - 1].duration)
+                    }
                 }
-
-                if (i === note.length)
-                    i = 0;
             }
+
+            function play(hz, octave, sustain, tempo, waveType) {
+                    var sustainFnl = sustain * tempo;
+                    var osc = ctx.createOscillator();
+                    var gainNode = ctx.createGain();
+                    notesPlayed++;
+                    console.log(notesPlayed);
+                
+
+                    osc.connect(gainNode);
+                    gainNode.connect(ctx.destination);
+                    gainNode.gain.value = 0.0;
+                    gainNode.gain.setTargetAtTime(0.75, ctx.currentTime, 0.1);
+                    gainNode.gain.setTargetAtTime(0.0, ctx.currentTime + sustainFnl, 0.01);
+                    osc.frequency.value = hz * octave / 4;
+                    osc.type = waveType;
+                    osc.start();
+                    osc.stop(ctx.currentTime + sustainFnl + 0.01);
+                }
+            
         </script>
     </body>
     

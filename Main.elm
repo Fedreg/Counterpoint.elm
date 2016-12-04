@@ -6,6 +6,7 @@ import Html.Events exposing (onClick, onInput)
 import Regex exposing (..)
 import String exposing (..)
 import List.Extra exposing (getAt)
+import Dict exposing (..)
 
 
 main =
@@ -22,12 +23,17 @@ main =
 
 
 type alias Model =
-    { initialNotes : String
-    , notesToSend : List Note
+    { initialNotes1 : String
+    , initialNotes2 : String
+    , initialNotes3 : String
+    , initialNotes4 : String
+    , voice1 : List Note
+    , voice2 : List Note
+    , voice3 : List Note
+    , voice4 : List Note
     , index : Int
     , bpm : Int
     , waveType : String
-    , numberOfInputs : Int
     }
 
 
@@ -46,12 +52,17 @@ type alias PlayBundle =
 
 
 model =
-    { initialNotes = ""
-    , notesToSend = []
+    { initialNotes1 = ""
+    , initialNotes2 = ""
+    , initialNotes3 = ""
+    , initialNotes4 = ""
+    , voice1 = []
+    , voice2 = []
+    , voice3 = []
+    , voice4 = []
     , index = 0
     , bpm = 80
     , waveType = "square"
-    , numberOfInputs = 1
     }
 
 
@@ -63,34 +74,81 @@ init =
 --UPDATE
 
 
-port send : PlayBundle -> Cmd msg
+port send1 : PlayBundle -> Cmd msg
+
+
+port send2 : PlayBundle -> Cmd msg
+
+
+port send3 : PlayBundle -> Cmd msg
+
+
+port send4 : PlayBundle -> Cmd msg
 
 
 type Msg
-    = AcceptNotes String
+    = AcceptNotes1 String
+    | AcceptNotes2 String
+    | AcceptNotes3 String
+    | AcceptNotes4 String
     | SendNotes
     | ChangeBPM String
     | ChangeWaveType String
+    | AddVoice
 
 
 update msg model =
     case msg of
-        AcceptNotes text ->
+        AcceptNotes1 text ->
             ( { model
-                | initialNotes = text
-                , notesToSend = parseNotes model.initialNotes
+                | initialNotes1 = text
+                , voice1 = parseNotes model.initialNotes1
+              }
+            , Cmd.none
+            )
+
+        AcceptNotes2 text ->
+            ( { model
+                | initialNotes2 = text
+                , voice2 = parseNotes model.initialNotes2
+              }
+            , Cmd.none
+            )
+
+        AcceptNotes3 text ->
+            ( { model
+                | initialNotes3 = text
+                , voice3 = parseNotes model.initialNotes3
+              }
+            , Cmd.none
+            )
+
+        AcceptNotes4 text ->
+            ( { model
+                | initialNotes4 = text
+                , voice4 = parseNotes model.initialNotes4
               }
             , Cmd.none
             )
 
         SendNotes ->
-            ( model, send (PlayBundle model.notesToSend (tempo model.bpm) model.waveType) )
+            ( model
+            , Cmd.batch
+                [ send1 (PlayBundle model.voice1 (tempo model.bpm) model.waveType)
+                , send2 (PlayBundle model.voice2 (tempo model.bpm) model.waveType)
+                , send3 (PlayBundle model.voice3 (tempo model.bpm) model.waveType)
+                , send4 (PlayBundle model.voice4 (tempo model.bpm) model.waveType)
+                ]
+            )
 
         ChangeBPM text ->
             ( { model | bpm = Result.withDefault 128 (String.toInt text) }, Cmd.none )
 
         ChangeWaveType text ->
             ( { model | waveType = text }, Cmd.none )
+
+        AddVoice ->
+            ( { model | voice2 = parseNotes model.initialNotes1 }, Cmd.none )
 
 
 subscriptions =
@@ -209,24 +267,27 @@ view : Model -> Html Msg
 view model =
     div [ style [ ( "textAlign", "center" ) ] ]
         [ h1 [ style [ ( "textDecoration", "underline" ), ( "marginBottom", "2rem" ) ] ] [ text "COUNTERPOINT.ELM" ]
-        , noteInputField "1"
-        , noteInputField "2"
+        , noteInputField AcceptNotes1
+        , noteInputField AcceptNotes2
+        , noteInputField AcceptNotes3
+        , noteInputField AcceptNotes4
         , bpmInput
         , waveSelectMenu
         , button [ onClick SendNotes ] [ text "Play Notes" ]
         , div [] [ text "NOTES TO BE PLAYED" ]
-        , div [ style [ ( "color", "red" ), ( "fontSize", "0.75 rem" ) ] ] [ text (toString model.notesToSend) ]
+        , div [ style [ ( "color", "red" ), ( "fontSize", "0.75rem" ) ] ] [ text (toString model.voice1) ]
+        , div [ style [ ( "color", "orange" ), ( "fontSize", "0.75rem" ) ] ] [ text (toString model.voice2) ]
+        , div [ style [ ( "color", "purple" ), ( "fontSize", "0.75rem" ) ] ] [ text (toString model.voice3) ]
+        , div [ style [ ( "color", "lightblue" ), ( "fontSize", "0.75rem" ) ] ] [ text (toString model.voice4) ]
         , div [ style [ ( "margin", "1rem auto" ) ] ] [ instructions ]
         ]
 
 
-noteInputField : String -> Html Msg
-noteInputField idName =
+noteInputField msg =
     input
         [ type_ "text"
-        , id idName
         , placeholder "Enter notes to play"
-        , onInput AcceptNotes
+        , onInput msg
         , style
             [ ( "margin", " 0.5rem 20px" )
             , ( "width", "80%" )
@@ -236,6 +297,23 @@ noteInputField idName =
         []
 
 
+
+{--
+additionalVoice : Html Msg
+additionalVoice =
+    label
+        [ style [ ( "display", "block" ) ] ]
+        [ input
+            [ type_ "checkbox"
+            , onClick AddVoice
+            ]
+            []
+        , text ("Add Voice #2")
+        ]
+-}
+
+
+waveSelectMenu : Html Msg
 waveSelectMenu =
     select
         [ onInput ChangeWaveType
@@ -253,6 +331,7 @@ waveSelectMenu =
         ]
 
 
+bpmInput : Html Msg
 bpmInput =
     input
         [ type_ "number"
@@ -268,6 +347,7 @@ bpmInput =
         [ text "Beats per minute" ]
 
 
+instructions : Html Msg
 instructions =
     ul [ style [ ( "listStyle", "none" ) ] ]
         [ li [] [ text "Enter notes in the format: CW3 where ..." ]

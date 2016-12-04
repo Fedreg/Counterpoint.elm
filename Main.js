@@ -9781,6 +9781,41 @@ var _user$project$Main$instructions = A2(
 			}
 		}
 	});
+var _user$project$Main$noteInputField = function (msg) {
+	return A2(
+		_elm_lang$html$Html$input,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$type_('text'),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$placeholder('Enter notes to play'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onInput(msg),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin', _1: ' 0.5rem 20px'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'width', _1: '80%'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'textTransform', _1: 'uppercase'},
+										_1: {ctor: '[]'}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		},
+		{ctor: '[]'});
+};
 var _user$project$Main$tempo = function (bpm) {
 	return (_elm_lang$core$Basics$toFloat(60) / _elm_lang$core$Basics$toFloat(bpm)) * 0.5;
 };
@@ -9844,16 +9879,21 @@ var _user$project$Main$sustain = function (duration) {
 };
 var _user$project$Main$subscriptions = _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none);
 var _user$project$Main$model = {
-	initialNotes: '',
-	notesToSend: {ctor: '[]'},
+	initialNotes1: '',
+	initialNotes2: '',
+	initialNotes3: '',
+	initialNotes4: '',
+	voice1: {ctor: '[]'},
+	voice2: {ctor: '[]'},
+	voice3: {ctor: '[]'},
+	voice4: {ctor: '[]'},
 	index: 0,
 	bpm: 80,
-	waveType: 'square',
-	numberOfInputs: 1
+	waveType: 'square'
 };
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$model, _1: _elm_lang$core$Platform_Cmd$none};
-var _user$project$Main$send = _elm_lang$core$Native_Platform.outgoingPort(
-	'send',
+var _user$project$Main$send1 = _elm_lang$core$Native_Platform.outgoingPort(
+	'send1',
 	function (v) {
 		return {
 			noteList: _elm_lang$core$Native_List.toArray(v.noteList).map(
@@ -9864,10 +9904,65 @@ var _user$project$Main$send = _elm_lang$core$Native_Platform.outgoingPort(
 			waveType: v.waveType
 		};
 	});
-var _user$project$Main$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {initialNotes: a, notesToSend: b, index: c, bpm: d, waveType: e, numberOfInputs: f};
+var _user$project$Main$send2 = _elm_lang$core$Native_Platform.outgoingPort(
+	'send2',
+	function (v) {
+		return {
+			noteList: _elm_lang$core$Native_List.toArray(v.noteList).map(
+				function (v) {
+					return {hz: v.hz, duration: v.duration, octave: v.octave};
+				}),
+			tempo: v.tempo,
+			waveType: v.waveType
+		};
 	});
+var _user$project$Main$send3 = _elm_lang$core$Native_Platform.outgoingPort(
+	'send3',
+	function (v) {
+		return {
+			noteList: _elm_lang$core$Native_List.toArray(v.noteList).map(
+				function (v) {
+					return {hz: v.hz, duration: v.duration, octave: v.octave};
+				}),
+			tempo: v.tempo,
+			waveType: v.waveType
+		};
+	});
+var _user$project$Main$send4 = _elm_lang$core$Native_Platform.outgoingPort(
+	'send4',
+	function (v) {
+		return {
+			noteList: _elm_lang$core$Native_List.toArray(v.noteList).map(
+				function (v) {
+					return {hz: v.hz, duration: v.duration, octave: v.octave};
+				}),
+			tempo: v.tempo,
+			waveType: v.waveType
+		};
+	});
+var _user$project$Main$Model = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return {initialNotes1: a, initialNotes2: b, initialNotes3: c, initialNotes4: d, voice1: e, voice2: f, voice3: g, voice4: h, index: i, bpm: j, waveType: k};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
 var _user$project$Main$Note = F3(
 	function (a, b, c) {
 		return {hz: a, duration: b, octave: c};
@@ -9928,14 +10023,47 @@ var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p4 = msg;
 		switch (_p4.ctor) {
-			case 'AcceptNotes':
+			case 'AcceptNotes1':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							initialNotes: _p4._0,
-							notesToSend: _user$project$Main$parseNotes(model.initialNotes)
+							initialNotes1: _p4._0,
+							voice1: _user$project$Main$parseNotes(model.initialNotes1)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'AcceptNotes2':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							initialNotes2: _p4._0,
+							voice2: _user$project$Main$parseNotes(model.initialNotes2)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'AcceptNotes3':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							initialNotes3: _p4._0,
+							voice3: _user$project$Main$parseNotes(model.initialNotes3)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'AcceptNotes4':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							initialNotes4: _p4._0,
+							voice4: _user$project$Main$parseNotes(model.initialNotes4)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -9943,12 +10071,44 @@ var _user$project$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _user$project$Main$send(
-						A3(
-							_user$project$Main$PlayBundle,
-							model.notesToSend,
-							_user$project$Main$tempo(model.bpm),
-							model.waveType))
+					_1: _elm_lang$core$Platform_Cmd$batch(
+						{
+							ctor: '::',
+							_0: _user$project$Main$send1(
+								A3(
+									_user$project$Main$PlayBundle,
+									model.voice1,
+									_user$project$Main$tempo(model.bpm),
+									model.waveType)),
+							_1: {
+								ctor: '::',
+								_0: _user$project$Main$send2(
+									A3(
+										_user$project$Main$PlayBundle,
+										model.voice2,
+										_user$project$Main$tempo(model.bpm),
+										model.waveType)),
+								_1: {
+									ctor: '::',
+									_0: _user$project$Main$send3(
+										A3(
+											_user$project$Main$PlayBundle,
+											model.voice3,
+											_user$project$Main$tempo(model.bpm),
+											model.waveType)),
+									_1: {
+										ctor: '::',
+										_0: _user$project$Main$send4(
+											A3(
+												_user$project$Main$PlayBundle,
+												model.voice4,
+												_user$project$Main$tempo(model.bpm),
+												model.waveType)),
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						})
 				};
 			case 'ChangeBPM':
 				return {
@@ -9963,7 +10123,7 @@ var _user$project$Main$update = F2(
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
+			case 'ChangeWaveType':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -9971,8 +10131,19 @@ var _user$project$Main$update = F2(
 						{waveType: _p4._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							voice2: _user$project$Main$parseNotes(model.initialNotes1)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
+var _user$project$Main$AddVoice = {ctor: 'AddVoice'};
 var _user$project$Main$ChangeWaveType = function (a) {
 	return {ctor: 'ChangeWaveType', _0: a};
 };
@@ -10110,47 +10281,17 @@ var _user$project$Main$bpmInput = A2(
 		_1: {ctor: '[]'}
 	});
 var _user$project$Main$SendNotes = {ctor: 'SendNotes'};
-var _user$project$Main$AcceptNotes = function (a) {
-	return {ctor: 'AcceptNotes', _0: a};
+var _user$project$Main$AcceptNotes4 = function (a) {
+	return {ctor: 'AcceptNotes4', _0: a};
 };
-var _user$project$Main$noteInputField = function (idName) {
-	return A2(
-		_elm_lang$html$Html$input,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$type_('text'),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$id(idName),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$placeholder('Enter notes to play'),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$AcceptNotes),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(
-								{
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'margin', _1: ' 0.5rem 20px'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'width', _1: '80%'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'textTransform', _1: 'uppercase'},
-											_1: {ctor: '[]'}
-										}
-									}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		},
-		{ctor: '[]'});
+var _user$project$Main$AcceptNotes3 = function (a) {
+	return {ctor: 'AcceptNotes3', _0: a};
+};
+var _user$project$Main$AcceptNotes2 = function (a) {
+	return {ctor: 'AcceptNotes2', _0: a};
+};
+var _user$project$Main$AcceptNotes1 = function (a) {
+	return {ctor: 'AcceptNotes1', _0: a};
 };
 var _user$project$Main$view = function (model) {
 	return A2(
@@ -10190,84 +10331,167 @@ var _user$project$Main$view = function (model) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: _user$project$Main$noteInputField('1'),
+				_0: _user$project$Main$noteInputField(_user$project$Main$AcceptNotes1),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Main$noteInputField('2'),
+					_0: _user$project$Main$noteInputField(_user$project$Main$AcceptNotes2),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Main$bpmInput,
+						_0: _user$project$Main$noteInputField(_user$project$Main$AcceptNotes3),
 						_1: {
 							ctor: '::',
-							_0: _user$project$Main$waveSelectMenu,
+							_0: _user$project$Main$noteInputField(_user$project$Main$AcceptNotes4),
 							_1: {
 								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$button,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$SendNotes),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text('Play Notes'),
-										_1: {ctor: '[]'}
-									}),
+								_0: _user$project$Main$bpmInput,
 								_1: {
 									ctor: '::',
-									_0: A2(
-										_elm_lang$html$Html$div,
-										{ctor: '[]'},
-										{
-											ctor: '::',
-											_0: _elm_lang$html$Html$text('NOTES TO BE PLAYED'),
-											_1: {ctor: '[]'}
-										}),
+									_0: _user$project$Main$waveSelectMenu,
 									_1: {
 										ctor: '::',
 										_0: A2(
-											_elm_lang$html$Html$div,
+											_elm_lang$html$Html$button,
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$style(
-													{
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'color', _1: 'red'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'fontSize', _1: '0.75 rem'},
-															_1: {ctor: '[]'}
-														}
-													}),
+												_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$SendNotes),
 												_1: {ctor: '[]'}
 											},
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html$text(
-													_elm_lang$core$Basics$toString(model.notesToSend)),
+												_0: _elm_lang$html$Html$text('Play Notes'),
 												_1: {ctor: '[]'}
 											}),
 										_1: {
 											ctor: '::',
 											_0: A2(
 												_elm_lang$html$Html$div,
+												{ctor: '[]'},
 												{
 													ctor: '::',
-													_0: _elm_lang$html$Html_Attributes$style(
-														{
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'margin', _1: '1rem auto'},
-															_1: {ctor: '[]'}
-														}),
-													_1: {ctor: '[]'}
-												},
-												{
-													ctor: '::',
-													_0: _user$project$Main$instructions,
+													_0: _elm_lang$html$Html$text('NOTES TO BE PLAYED'),
 													_1: {ctor: '[]'}
 												}),
-											_1: {ctor: '[]'}
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$div,
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$style(
+															{
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'color', _1: 'red'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: 'fontSize', _1: '0.75rem'},
+																	_1: {ctor: '[]'}
+																}
+															}),
+														_1: {ctor: '[]'}
+													},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text(
+															_elm_lang$core$Basics$toString(model.voice1)),
+														_1: {ctor: '[]'}
+													}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_lang$html$Html$div,
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html_Attributes$style(
+																{
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: 'color', _1: 'orange'},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: 'fontSize', _1: '0.75rem'},
+																		_1: {ctor: '[]'}
+																	}
+																}),
+															_1: {ctor: '[]'}
+														},
+														{
+															ctor: '::',
+															_0: _elm_lang$html$Html$text(
+																_elm_lang$core$Basics$toString(model.voice2)),
+															_1: {ctor: '[]'}
+														}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_lang$html$Html$div,
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$style(
+																	{
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: 'color', _1: 'purple'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: 'fontSize', _1: '0.75rem'},
+																			_1: {ctor: '[]'}
+																		}
+																	}),
+																_1: {ctor: '[]'}
+															},
+															{
+																ctor: '::',
+																_0: _elm_lang$html$Html$text(
+																	_elm_lang$core$Basics$toString(model.voice3)),
+																_1: {ctor: '[]'}
+															}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_lang$html$Html$div,
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html_Attributes$style(
+																		{
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: 'color', _1: 'lightblue'},
+																			_1: {
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: 'fontSize', _1: '0.75rem'},
+																				_1: {ctor: '[]'}
+																			}
+																		}),
+																	_1: {ctor: '[]'}
+																},
+																{
+																	ctor: '::',
+																	_0: _elm_lang$html$Html$text(
+																		_elm_lang$core$Basics$toString(model.voice4)),
+																	_1: {ctor: '[]'}
+																}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_lang$html$Html$div,
+																	{
+																		ctor: '::',
+																		_0: _elm_lang$html$Html_Attributes$style(
+																			{
+																				ctor: '::',
+																				_0: {ctor: '_Tuple2', _0: 'margin', _1: '1rem auto'},
+																				_1: {ctor: '[]'}
+																			}),
+																		_1: {ctor: '[]'}
+																	},
+																	{
+																		ctor: '::',
+																		_0: _user$project$Main$instructions,
+																		_1: {ctor: '[]'}
+																	}),
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												}
+											}
 										}
 									}
 								}
