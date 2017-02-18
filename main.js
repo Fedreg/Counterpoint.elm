@@ -4296,21 +4296,19 @@ var _elm_community$list_extra$List_Extra$zip = _elm_lang$core$List$map2(
 		function (v0, v1) {
 			return {ctor: '_Tuple2', _0: v0, _1: v1};
 		}));
-var _elm_community$list_extra$List_Extra$isPrefixOf = function (prefix) {
-	return function (_p0) {
-		return A2(
-			_elm_lang$core$List$all,
-			_elm_lang$core$Basics$identity,
-			A3(
-				_elm_lang$core$List$map2,
-				F2(
-					function (x, y) {
-						return _elm_lang$core$Native_Utils.eq(x, y);
-					}),
-				prefix,
-				_p0));
-	};
-};
+var _elm_community$list_extra$List_Extra$isPrefixOf = F2(
+	function (prefix, xs) {
+		var _p0 = {ctor: '_Tuple2', _0: prefix, _1: xs};
+		if (_p0._0.ctor === '[]') {
+			return true;
+		} else {
+			if (_p0._1.ctor === '[]') {
+				return false;
+			} else {
+				return _elm_lang$core$Native_Utils.eq(_p0._0._0, _p0._1._0) && A2(_elm_community$list_extra$List_Extra$isPrefixOf, _p0._0._1, _p0._1._1);
+			}
+		}
+	});
 var _elm_community$list_extra$List_Extra$isSuffixOf = F2(
 	function (suffix, xs) {
 		return A2(
@@ -4532,12 +4530,12 @@ var _elm_community$list_extra$List_Extra$groupsOfVarying_ = F3(
 				var _p22 = A2(_elm_community$list_extra$List_Extra$splitAt, _p21._0._0, list);
 				var head = _p22._0;
 				var tail = _p22._1;
-				var _v10 = _p21._0._1,
-					_v11 = tail,
-					_v12 = {ctor: '::', _0: head, _1: accu};
-				listOflengths = _v10;
-				list = _v11;
-				accu = _v12;
+				var _v11 = _p21._0._1,
+					_v12 = tail,
+					_v13 = {ctor: '::', _0: head, _1: accu};
+				listOflengths = _v11;
+				list = _v12;
+				accu = _v13;
 				continue groupsOfVarying_;
 			} else {
 				return _elm_lang$core$List$reverse(accu);
@@ -4701,13 +4699,13 @@ var _elm_community$list_extra$List_Extra$interweaveHelp = F3(
 		interweaveHelp:
 		while (true) {
 			var _p37 = {ctor: '_Tuple2', _0: l1, _1: l2};
-			_v23_1:
+			_v24_1:
 			do {
 				if (_p37._0.ctor === '::') {
 					if (_p37._1.ctor === '::') {
-						var _v24 = _p37._0._1,
-							_v25 = _p37._1._1,
-							_v26 = A2(
+						var _v25 = _p37._0._1,
+							_v26 = _p37._1._1,
+							_v27 = A2(
 							_elm_lang$core$Basics_ops['++'],
 							acc,
 							{
@@ -4719,16 +4717,16 @@ var _elm_community$list_extra$List_Extra$interweaveHelp = F3(
 									_1: {ctor: '[]'}
 								}
 							});
-						l1 = _v24;
-						l2 = _v25;
-						acc = _v26;
+						l1 = _v25;
+						l2 = _v26;
+						acc = _v27;
 						continue interweaveHelp;
 					} else {
-						break _v23_1;
+						break _v24_1;
 					}
 				} else {
 					if (_p37._1.ctor === '[]') {
-						break _v23_1;
+						break _v24_1;
 					} else {
 						return A2(_elm_lang$core$Basics_ops['++'], acc, _p37._1);
 					}
@@ -4832,8 +4830,8 @@ var _elm_community$list_extra$List_Extra$transpose = function (ll) {
 			return {ctor: '[]'};
 		} else {
 			if (_p43._0.ctor === '[]') {
-				var _v31 = _p43._1;
-				ll = _v31;
+				var _v32 = _p43._1;
+				ll = _v32;
 				continue transpose;
 			} else {
 				var _p44 = _p43._1;
@@ -4880,13 +4878,6 @@ var _elm_community$list_extra$List_Extra$removeAt = F2(
 			}
 		}
 	});
-var _elm_community$list_extra$List_Extra$singleton = function (x) {
-	return {
-		ctor: '::',
-		_0: x,
-		_1: {ctor: '[]'}
-	};
-};
 var _elm_community$list_extra$List_Extra$stableSortWith = F2(
 	function (pred, list) {
 		var predWithIndex = F2(
@@ -5041,10 +5032,10 @@ var _elm_community$list_extra$List_Extra$find = F2(
 				if (predicate(_p62)) {
 					return _elm_lang$core$Maybe$Just(_p62);
 				} else {
-					var _v40 = predicate,
-						_v41 = _p61._1;
-					predicate = _v40;
-					list = _v41;
+					var _v41 = predicate,
+						_v42 = _p61._1;
+					predicate = _v41;
+					list = _v42;
 					continue find;
 				}
 			}
@@ -5126,7 +5117,7 @@ var _elm_community$list_extra$List_Extra$lift4 = F5(
 			la);
 	});
 var _elm_community$list_extra$List_Extra$andMap = F2(
-	function (fl, l) {
+	function (l, fl) {
 		return A3(
 			_elm_lang$core$List$map2,
 			F2(
@@ -5148,12 +5139,12 @@ var _elm_community$list_extra$List_Extra$uniqueHelp = F3(
 				var _p65 = _p64._0;
 				var computedFirst = f(_p65);
 				if (A2(_elm_lang$core$Set$member, computedFirst, existing)) {
-					var _v43 = f,
-						_v44 = existing,
-						_v45 = _p66;
-					f = _v43;
-					existing = _v44;
-					remaining = _v45;
+					var _v44 = f,
+						_v45 = existing,
+						_v46 = _p66;
+					f = _v44;
+					existing = _v45;
+					remaining = _v46;
 					continue uniqueHelp;
 				} else {
 					return {
@@ -5180,14 +5171,11 @@ var _elm_community$list_extra$List_Extra$allDifferentBy = F2(
 			_elm_lang$core$List$length(
 				A2(_elm_community$list_extra$List_Extra$uniqueBy, f, list)));
 	});
+var _elm_community$list_extra$List_Extra$allDifferent = function (list) {
+	return A2(_elm_community$list_extra$List_Extra$allDifferentBy, _elm_lang$core$Basics$identity, list);
+};
 var _elm_community$list_extra$List_Extra$unique = function (list) {
 	return A3(_elm_community$list_extra$List_Extra$uniqueHelp, _elm_lang$core$Basics$identity, _elm_lang$core$Set$empty, list);
-};
-var _elm_community$list_extra$List_Extra$allDifferent = function (list) {
-	return _elm_lang$core$Native_Utils.eq(
-		_elm_lang$core$List$length(list),
-		_elm_lang$core$List$length(
-			_elm_community$list_extra$List_Extra$unique(list)));
 };
 var _elm_community$list_extra$List_Extra$dropWhile = F2(
 	function (predicate, list) {
@@ -5198,10 +5186,10 @@ var _elm_community$list_extra$List_Extra$dropWhile = F2(
 				return {ctor: '[]'};
 			} else {
 				if (predicate(_p67._0)) {
-					var _v47 = predicate,
-						_v48 = _p67._1;
-					predicate = _v47;
-					list = _v48;
+					var _v48 = predicate,
+						_v49 = _p67._1;
+					predicate = _v48;
+					list = _v49;
 					continue dropWhile;
 				} else {
 					return list;
@@ -5209,20 +5197,31 @@ var _elm_community$list_extra$List_Extra$dropWhile = F2(
 			}
 		}
 	});
-var _elm_community$list_extra$List_Extra$takeWhile = F2(
-	function (predicate, list) {
-		var _p68 = list;
-		if (_p68.ctor === '[]') {
-			return {ctor: '[]'};
-		} else {
-			var _p69 = _p68._0;
-			return predicate(_p69) ? {
-				ctor: '::',
-				_0: _p69,
-				_1: A2(_elm_community$list_extra$List_Extra$takeWhile, predicate, _p68._1)
-			} : {ctor: '[]'};
-		}
-	});
+var _elm_community$list_extra$List_Extra$takeWhile = function (predicate) {
+	var takeWhileMemo = F2(
+		function (memo, list) {
+			takeWhileMemo:
+			while (true) {
+				var _p68 = list;
+				if (_p68.ctor === '[]') {
+					return _elm_lang$core$List$reverse(memo);
+				} else {
+					var _p69 = _p68._0;
+					if (predicate(_p69)) {
+						var _v51 = {ctor: '::', _0: _p69, _1: memo},
+							_v52 = _p68._1;
+						memo = _v51;
+						list = _v52;
+						continue takeWhileMemo;
+					} else {
+						return _elm_lang$core$List$reverse(memo);
+					}
+				}
+			}
+		});
+	return takeWhileMemo(
+		{ctor: '[]'});
+};
 var _elm_community$list_extra$List_Extra$span = F2(
 	function (p, xs) {
 		return {
@@ -5341,12 +5340,12 @@ var _elm_community$list_extra$List_Extra$swapAt = F3(
 				return _elm_lang$core$Maybe$Just(l);
 			} else {
 				if (_elm_lang$core$Native_Utils.cmp(index1, index2) > 0) {
-					var _v56 = index2,
-						_v57 = index1,
-						_v58 = l;
-					index1 = _v56;
-					index2 = _v57;
-					l = _v58;
+					var _v59 = index2,
+						_v60 = index1,
+						_v61 = l;
+					index1 = _v59;
+					index2 = _v60;
+					l = _v61;
 					continue swapAt;
 				} else {
 					if (_elm_lang$core$Native_Utils.cmp(index1, 0) < 0) {
