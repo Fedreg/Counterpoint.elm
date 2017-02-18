@@ -6,6 +6,8 @@ import Html.Events exposing (onClick, onInput)
 import Regex exposing (..)
 import String exposing (..)
 import List.Extra exposing (getAt)
+import Time exposing (..)
+import Update.Extra.Infix exposing ((:>))
 
 
 main =
@@ -15,7 +17,6 @@ main =
         , view = view
         , subscriptions = subscriptions
         }
-
 
 
 --MODEL
@@ -39,7 +40,7 @@ type alias Note =
 
 
 type alias PlayBundle =
-    { noteList : List Note
+    { note : Maybe Note
     , tempo : Float
     , waveType : String
     }
@@ -68,6 +69,8 @@ port send : PlayBundle -> Cmd msg
 
 type Msg
     = AcceptNotes String
+    | Play
+    | ResetIndex
     | SendNotes
     | ChangeBPM String
     | ChangeWaveType String
@@ -83,9 +86,18 @@ update msg model =
             , Cmd.none
             )
 
-        SendNotes ->
-            ( model, send (PlayBundle model.notesToSend (tempo model.bpm) model.waveType) )
+        Play ->
+            (model, Cmd.none)
+               :> update ResetIndex
+               :> update SendNotes
 
+        ResetIndex ->
+            ( { model | index = 0 }, Cmd.none)
+
+        SendNotes ->
+            ( { model | index = model.index +1}
+            , send (PlayBundle (getAt model.index model.notesToSend) (tempo model.bpm) model.waveType))
+            
         ChangeBPM text ->
             ( { model | bpm = Result.withDefault 128 (String.toInt text) }, Cmd.none )
 
@@ -93,10 +105,25 @@ update msg model =
             ( { model | waveType = text }, Cmd.none )
 
 
-subscriptions =
-    always Sub.none
+--subscriptions =
+--    always Sub.none
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    if model.index > 0 && model.index < List.length model.notesToSend
+      then 
+         let 
+            sustain =
+               Maybe.withDefault 1 ((getAt (model.index - 1) model.notesToSend)
+               |> Maybe.map .duration) 
 
-
+            speed =
+               tempo model.bpm 
+               
+         in
+            Time.every ((sustain * speed) * second) (always SendNotes)
+        --then Time.every (Maybe.withDefault 1 ((getAt model.index model.notesToSend) |> Maybe.map .duration) * 0.5 * second) (always SendNotes)
+        else Sub.none
+ 
 parseNotes : String -> List Note
 parseNotes string =
     toLower string
@@ -107,7 +134,7 @@ parseNotes string =
 
 noteSorter : String -> Note
 noteSorter string =
-    case (length string) of
+    case (String.length string) of
         3 ->
             Note (frequencies (slice 0 1 string)) (sustain (slice 1 2 string)) (octave (Result.withDefault 0 (toInt (slice 2 3 string))))
 
@@ -115,7 +142,7 @@ noteSorter string =
             Note (frequencies (slice 0 2 string)) (sustain (slice 2 3 string)) (octave (Result.withDefault 0 (toInt (slice 3 4 string))))
 
         _ ->
-            Note 0.0 0.0 0
+            Note 0.0 0.0 0 
 
 
 sustain : String -> Float
@@ -201,19 +228,18 @@ tempo bpm =
     (Basics.toFloat 60 / Basics.toFloat bpm) * 0.5
 
 
-
 -- VIEW
 
 
 view : Model -> Html Msg
 view model =
-    div [ style [ ( "textAlign", "center" ) ] ]
+    div [ style [ ( "textAlign", "center" ), ("color", "#ddd") ] ]
         [ h1 [ style [ ( "textDecoration", "underline" ), ( "marginBottom", "2rem" ) ] ] [ text "COUNTERPOINT.ELM" ]
         , noteInputField "1"
         , noteInputField "2"
         , bpmInput
         , waveSelectMenu
-        , button [ onClick SendNotes ] [ text "Play Notes" ]
+        , button [ onClick Play, style [("backgroundColor", "#ddd"), ("color", "#333"), ("border", "1px solid #333")] ] [ text "Play Notes" ]
         , div [] [ text "NOTES TO BE PLAYED" ]
         , div [ style [ ( "color", "red" ), ( "fontSize", "0.75 rem" ) ] ] [ text (toString model.notesToSend) ]
         , div [ style [ ( "margin", "1rem auto" ) ] ] [ instructions ]
@@ -231,6 +257,7 @@ noteInputField idName =
             [ ( "margin", " 0.5rem 20px" )
             , ( "width", "80%" )
             , ( "textTransform", "uppercase" )
+            , ( "color", "#ddd")
             ]
         ]
         []
@@ -244,6 +271,7 @@ waveSelectMenu =
             , ( "width", "15%" )
             , ( "textTransform", "uppercase" )
             , ( "display", "inline-block" )
+            , ("color", "#ddd")
             ]
         ]
         [ option [ value "square" ] [ text "square" ]
@@ -258,18 +286,20 @@ bpmInput =
         [ type_ "number"
         , placeholder "BPM"
         , onInput ChangeBPM
+        , value (toString model.bpm)
         , style
             [ ( "margin", " 1rem 20px" )
             , ( "width", "15%" )
             , ( "textTransform", "uppercase" )
             , ( "display", "inline-block" )
+            , ( "color", "#ddd")
             ]
         ]
         [ text "Beats per minute" ]
 
 
 instructions =
-    ul [ style [ ( "listStyle", "none" ) ] ]
+    ul [ style [ ( "listStyle", "none" ), ("color", "#ddd")] ]
         [ li [] [ text "Enter notes in the format: CW3 where ..." ]
         , li [] [ text "C is the name of the note to be played (sharps are allowed but no flats yet)" ]
         , li [] [ text "W is the note duration, where W = whole, H = eigth, Q = quarter, E = eigth, & S = sixteenth" ]
